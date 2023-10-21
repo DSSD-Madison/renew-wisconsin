@@ -1,9 +1,10 @@
-export default function Home() {
-  return (
+export default function Admin() {
+    return (
     <section className="w-screen h-screen content-center">
         <div className="flex justify-center items-center h-full w-full">
-          Hello World
+          Admin
         </div>
     </section>
-  )
-}
+    )
+  }
+  
