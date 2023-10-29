@@ -20,7 +20,7 @@ const Navbar = () => {
                         <FaBusAlt size={24}/>
                     </IconContext.Provider>
                     <h1 className="px-2">
-                        Electric Bus Cost Savings Calculator
+                        Electric Bus Savings Calculator
                     </h1>
                 </div>
                 <div className="hidden sm:flex">
@@ -48,9 +48,7 @@ const Navbar = () => {
                     </ul>
                 </div>
                 <div onClick={handleNav} className="md:hidden cursor-pointer pl-24">
-                    <IconContext.Provider value={{color: "white"}}>
-                        <AiOutlineMenu size={24}/>
-                    </IconContext.Provider>
+                    <AiOutlineMenu size={24}/>
                 </div>
             </div>
                 <div className={
