@@ -20,9 +20,6 @@ export default function Home() {
             <div className="join join-vertical w-full">
               <Bus id="1"/>
               <Bus id="2"/>
-              <Bus id="3"/>
-              <Bus id="4"/>
-              <Bus id="5"/>
             </div>
             <div className="inline-flex float-right pt-4 px-4" onClick={addBus}>
               <button className="text-blue-700 font-bold">

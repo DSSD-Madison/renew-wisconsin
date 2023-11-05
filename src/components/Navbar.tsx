@@ -16,9 +16,7 @@ const Navbar = () => {
         <nav className="fixed justify-center w-full h-16 bg-[#f39c12]">
             <div className="flex justify-between items-center h-full w-full px-4 2xl:px-16">
                 <div className="flex md:text-xl sm:text-sm text-white">
-                    <IconContext.Provider value={{color: "white"}}>
-                        <FaBusAlt size={24}/>
-                    </IconContext.Provider>
+                    <FaBusAlt size={24}/>
                     <h1 className="px-2">
                         Electric Bus Savings Calculator
                     </h1>
