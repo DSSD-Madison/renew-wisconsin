@@ -1,34 +1,61 @@
 import React, { createContext, useEffect, useState, ReactNode } from 'react';
 import { db } from '~/config/firebaseConfig';
-import { collection, query, where, getDocs } from "firebase/firestore";
-export const DataContext = createContext<any[]>([]);
+import { collection, query, addDoc, getDocs } from "firebase/firestore";
+
+export const DataContext = createContext<any>(undefined);
 
 const DataContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [busData, setBusData] = useState<any[]>([]);
+  const [summerCharging, setSummerCharging] = useState<any[]>([]);
+  const [winterCharging, setWinterCharging] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchBusData = async () => {
-      try {
-        const q = query(collection(db, "busses"));
-        const querySnapshot = await getDocs(q);
-        const busDataArrTmp: any[] = [];
-    
-        querySnapshot.forEach((doc) => {
-          busDataArrTmp.push(doc.data());
-        });
-    
-        setBusData(busDataArrTmp); // You need to define setBusData in your component or use state management like useState
-      } catch (error) {
-        console.error('Error fetching bus data:', error);
-      }
+      const qBus = query(collection(db, "busses"));
+      const qWC = query(collection(db, "winter_charging"));
+      const qSC = query(collection(db, "summer_charging"));
+
+      const querySnapshotBus = await getDocs(qBus);
+      const querySnapshotSC = await getDocs(qSC);
+      const querySnapshotWC = await getDocs(qWC);
+
+      const busDataArrTmp: any[] = [];
+      const summerChargingArrTmp: any[] = [];
+      const winterChargingArrTmp: any[] = [];
+
+      querySnapshotBus.forEach((doc) => {
+        busDataArrTmp.push(doc.data());
+      });
+      querySnapshotSC.forEach((doc) => {
+        summerChargingArrTmp.push(doc.data());
+      });
+      querySnapshotWC.forEach((doc) => {
+        winterChargingArrTmp.push(doc.data());
+      });
+  
+      setBusData(busDataArrTmp); 
+      setSummerCharging(summerChargingArrTmp);
+      setWinterCharging(winterChargingArrTmp);
+
+      console.log(
+        busDataArrTmp
+      )
+      console.log(
+        summerChargingArrTmp
+      )
+      console.log(
+        winterChargingArrTmp
+      )
     };
 
     fetchBusData();
   }, []);
 
+  const value = { busData, summerCharging, winterCharging };
+
   return (
-    <DataContext.Provider value={busData}>{children}</DataContext.Provider>
+    <DataContext.Provider value={value}>{children}</DataContext.Provider>
   );
 };
 
