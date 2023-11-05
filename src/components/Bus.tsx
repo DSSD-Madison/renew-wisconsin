@@ -1,5 +1,5 @@
 import React from 'react';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 
 const Bus = (props) => {
 
@@ -52,9 +52,13 @@ const Bus = (props) => {
       setBusMaxRange(maxRangeTemp);
       const sumRange = (maxRangeTemp * 0.9).toFixed(1);
       const winRange = (sumRange * 0.8).toFixed(1); //Could be incorrect in excel sheet
-      setSummerRange(sumRange)
-      setWinterRange(winRange)
+      setSummerRange(sumRange);
+      setWinterRange(winRange);
     }
+
+    useEffect(() => {
+      busRouteChange(routeMiles);
+    },[busModel])
 
     function busRouteChange(miles){
       var error = document.getElementById("miles-error")
