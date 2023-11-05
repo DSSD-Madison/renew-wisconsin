@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { auth } from "../config/firebaseConfig";
+import { auth } from "~/config/firebaseConfig";
 import {signInWithEmailAndPassword, onAuthStateChanged, signOut} from "firebase/auth";
 
 export default function Admin() {
@@ -22,7 +22,6 @@ export default function Admin() {
       }
     });
   }, [])
-
 
   const handleSignIn = async () => {
     signInWithEmailAndPassword(auth, email, password)
