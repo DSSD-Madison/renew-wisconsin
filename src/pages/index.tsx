@@ -1,15 +1,15 @@
 import { IconContext } from "react-icons";
-import Bus from "../components/Bus";
 import {BiPlus} from "react-icons/bi";
+import Bus from "../components/Bus";
 import {useState} from "react";
 
 export default function Home() {
   const [busCount, setBusCount] = useState(1);
-  const busAccordian = ["1"];
+  const busAccordion = ["1"];
 
   const addBus = () => {
     setBusCount(busCount+1)
-    busAccordian.push(busCount.toString())
+    busAccordion.push(busCount.toString())
     console.log(busCount)
 };
 
