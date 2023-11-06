@@ -37,9 +37,3 @@ export default function Home() {
     </section>
   )
 };
-
-/**<h1 className="p-10">
-Total Electricity Cost per Day in Summer: <span className="text-blue-700">$4.25</span>
-Total Electricity Cost per Day in Winter: <span className="text-blue-700">$5.28</span>
-Total Diesel Cost per Day: <span className="text-blue-700">$43.33</span>
-</h1>**/

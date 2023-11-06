@@ -4,10 +4,8 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head />
-      <body className="bg-[#f9ce89]">
         <Main />
         <NextScript />
-      </body>
     </Html>
   );
 }

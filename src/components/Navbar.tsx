@@ -13,7 +13,7 @@ const Navbar = () => {
     }
 
     return (
-        <nav className="fixed justify-center w-full h-16 bg-[#f39c12]">
+        <nav className="fixed justify-center w-full h-16 bg-[#f39c12] z-0 relative">
             <div className="flex justify-between items-center h-full w-full px-4 2xl:px-16">
                 <div className="flex md:text-xl sm:text-sm text-white">
                     <FaBusAlt size={24}/>
@@ -56,9 +56,7 @@ const Navbar = () => {
                 }>
                 <div className="flex w-full items-counter justify-end">
                     <div onClick={handleNav} className="cursor-pointer">
-                        <IconContext.Provider value={{color:"white"}}>
-                            <AiOutlineClose size={25}/>
-                        </IconContext.Provider>
+                        <AiOutlineClose size={25}/>
                     </div>
                 </div>
                 <div className="flex-col py-4">
