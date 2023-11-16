@@ -1,7 +1,7 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
 
-const Bus = (props) => {
+const Bus = (props: any) => {
 
     const buses = {
       "N/A": {
@@ -44,7 +44,7 @@ const Bus = (props) => {
     const [kWhOneRouteWinter, setkWhOneRouteWinter] = useState(0);
     const [maxRoutesSummer, setMaxRoutesSummer] = useState(0);
     const [maxRoutesWinter, setMaxRoutesWinter] = useState(0);
-    const [timeOfDay, setTimeOfDay] = useState('');
+    const [timeOfDay, setTimeOfDay] = useState('N/A');
     const [chargerPower, setChargerPower] = useState(0);
     const [summerChargingTime, setSummerChargingTime] = useState(0);
     const [winterChargingTime, setWinterChargingTime] = useState(0);
@@ -52,20 +52,25 @@ const Bus = (props) => {
     const [kWhSummer, setkWhSummer] = useState(0);
     const [onPeakWinter, setOnPeakWinter] = useState(0);
     const [kWhWinter, setkWhWinter] = useState(0);
+    const [totalElectrictyCostPerDaySummer, setTotalElectricityCostPerDaySummer] = useState(0);
+    const [totalElectrictyCostPerDayWinter, setTotalElectricityCostPerDayWinter] = useState(0);
+    const [demandCharge, setDemandCharge] = useState(0);
+    const [dieselCostPerDay, setDieselCostPerDay] = useState(0);
 
     function busModelChange(model: string) {
       setBusModel(model);
       setMaxCapacity(buses[model].maxChargeCapacity);
       const maxRangeTemp = buses[model].maxRange;
       setBusMaxRange(maxRangeTemp);
-      const sumRange = (maxRangeTemp * 0.9);
-      const winRange = (sumRange * 0.8); //Could be incorrect in excel sheet
+      const sumRange = Math.round((maxRangeTemp * 0.9)*100)/100;
+      const winRange = Math.round((maxRangeTemp * 0.8)*100)/100; //Could be incorrect in excel sheet
       setSummerRange(sumRange);
       setWinterRange(winRange);
     }
 
     useEffect(() => {
       busRouteChange(routeMiles);
+      chargerPowerChange(String(chargerPower));
     },[busModel])
 
     function busRouteChange(miles: string){
@@ -133,42 +138,81 @@ const Bus = (props) => {
 
     function timeOfDayChange(time: string) {
       if(time=="Daytime"){
-        setTimeOfDay("D");
+        setTimeOfDay("Daytime");
+        setOnPeakSummer(13.00);
+        setOnPeakWinter(11.00);
+        setkWhSummer(0.0885);
+        setkWhWinter(0.08);
         return;
       }
       if(time=="Overnight"){
-        setTimeOfDay("O");
+        setTimeOfDay("Overnight");
+        setOnPeakSummer(0.00);
+        setOnPeakWinter(0.00);
+        setkWhSummer(0.054);
+        setkWhWinter(0.054);
         return;
       }
+      setTimeOfDay("N/A");
+      setOnPeakSummer(0.00);
+      setOnPeakWinter(0.00);
+      setkWhSummer(0.00);
+      setkWhWinter(0.00);
       return;
     }
 
+    useEffect(() => {
+      chargerPowerChange(String(chargerPower));
+    },[routeMiles])
+
     function chargerPowerChange(power: string){
-      const powerTemp = Number(power)
-      if(isNaN(powerTemp)){
+      const powerTemp = Number(power);
+      console.log(powerTemp)
+      if(isNaN(powerTemp) || powerTemp == 0){
         setChargerPower(0);
         return;
       }
       setChargerPower(powerTemp);
       setSummerChargingTime(Math.round(kWhOneRouteSummer / powerTemp * 100)/100);
       setWinterChargingTime(Math.round(kWhOneRouteWinter / powerTemp * 100)/100);
-      if(timeOfDay == "D"){
-        setOnPeakSummer(13.00);
-        setOnPeakWinter(11.00)
-      }
-      else{
-        setOnPeakSummer(0.00);
-        setOnPeakWinter(0.00);
-      }
-      if(timeOfDay == "D"){
-        setkWhSummer(0.0885)
-        setkWhWinter(0.08)
-      }
-      else{
-        setkWhSummer(0.0540)
-        setkWhWinter(0.0540)
-      }
       return;
+    }
+
+    useEffect(() => {
+      resultingCosts();
+    },[busModel,routeMiles,timeOfDay,chargerPower])
+
+    function resultingCosts(){
+      const summerCost = Math.round(kWhSummer*kWhOneRouteSummer*100)/100;
+      const winterCost = Math.round(kWhWinter*kWhOneRouteWinter*100)/100;
+      if(summerCost != totalElectrictyCostPerDaySummer){
+        //remove current bus cost from total
+        props.summercost(0-totalElectrictyCostPerDaySummer)
+        props.summercost(summerCost)
+      }
+      if(winterCost != totalElectrictyCostPerDayWinter){
+        props.wintercost(0-totalElectrictyCostPerDayWinter)
+        props.wintercost(winterCost);
+      }
+      setTotalElectricityCostPerDaySummer(summerCost);
+      setTotalElectricityCostPerDayWinter(winterCost);
+      if(timeOfDay == "Daytime"){
+        if(chargerPower > 39){
+          setDemandCharge(Math.round(chargerPower*12*100)/100)
+        }
+        else{
+          setDemandCharge(0.00)
+        }
+      }
+      else{
+        setDemandCharge(0.00)
+      }
+      const d = Math.round((Number(routeMiles)/6.0)*4*100)/100
+      if(d != dieselCostPerDay){
+        props.dieselcost(0-dieselCostPerDay)
+        props.dieselcost(d)
+      }
+      setDieselCostPerDay(d)
     }
 
     return(
@@ -195,8 +239,8 @@ const Bus = (props) => {
                 </div>
                 <div className="w-full m-4">
                   <span className="text-sm"><span className="font-bold">{busModel}</span> Battery Capacity: <span className="font-bold">{maxCapacity}</span> kWh</span><br/>
-                  <span className="text-sm"><span className="font-bold">{busModel}</span> Summer Range: <span className="font-bold">{summerRange}</span> miles</span><br/>
-                  <span className="text-sm"><span className="font-bold">{busModel}</span> Winter Range: <span className="font-bold">{winterRange}</span> miles</span><br/>
+                  <span className="text-sm">Summer Range: <span className="font-bold">{summerRange}</span> miles</span><br/>
+                  <span className="text-sm">Winter Range: <span className="font-bold">{winterRange}</span> miles</span><br/>
                 </div>
             </div>
             <div className="inline-flex w-full">
@@ -256,13 +300,20 @@ const Bus = (props) => {
                 </select>
                 </div>
                 <div className="w-full m-4">
-                  <span className="text-sm">Summer Charging Time: <span className="font-bold">{summerChargingTime}</span></span><br/>
-                  <span className="text-sm">Winter Charging Time: <span className="font-bold">{winterChargingTime}</span></span><br/>
+                  <span className="text-sm">Summer Charging Time: <span className="font-bold">{summerChargingTime}</span> hours</span><br/>
+                  <span className="text-sm">Winter Charging Time: <span className="font-bold">{winterChargingTime}</span> hours</span><br/>
                   <span className="text-sm">On-Peak $/kW Summer: $<span className="font-bold">{onPeakSummer}</span></span><br/>
                   <span className="text-sm">$/kWh Summer: $<span className="font-bold">{kWhSummer}</span></span><br/>
                   <span className="text-sm">On-Peak $/kW Winter: $<span className="font-bold">{onPeakWinter}</span></span><br/>
                   <span className="text-sm">$/kWh Winter: $<span className="font-bold">{kWhWinter}</span></span><br/>
                 </div>
+            </div>
+            <div>
+              <h1 className="font-bold">Resulting Costs</h1>
+              <h1>Total Electricity Cost per Day in Summer: $<span className="font-bold">{totalElectrictyCostPerDaySummer}</span></h1>
+              <h1>Total Electricity Cost per Day in Winter: $<span className="font-bold">{totalElectrictyCostPerDayWinter}</span></h1>
+              <h1>Demand Charger: $<span className="font-bold">{demandCharge}</span></h1>
+              <h1>Total Diesel Cost per Day: $<span className="font-bold">{dieselCostPerDay}</span></h1>
             </div>
           </div>
         </div>
