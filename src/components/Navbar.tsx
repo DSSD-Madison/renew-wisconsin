@@ -13,14 +13,12 @@ const Navbar = () => {
     }
 
     return (
-        <nav className="fixed justify-center w-full h-16 bg-[#f39c12]">
+        <nav className="fixed justify-center w-full h-16 bg-[#f39c12] z-0 relative">
             <div className="flex justify-between items-center h-full w-full px-4 2xl:px-16">
                 <div className="flex md:text-xl sm:text-sm text-white">
-                    <IconContext.Provider value={{color: "white"}}>
-                        <FaBusAlt size={24}/>
-                    </IconContext.Provider>
+                    <FaBusAlt size={24}/>
                     <h1 className="px-2">
-                        Electric Bus Cost Savings Calculator
+                        Electric Bus Savings Calculator
                     </h1>
                 </div>
                 <div className="hidden sm:flex">
@@ -48,9 +46,7 @@ const Navbar = () => {
                     </ul>
                 </div>
                 <div onClick={handleNav} className="md:hidden cursor-pointer pl-24">
-                    <IconContext.Provider value={{color: "white"}}>
-                        <AiOutlineMenu size={24}/>
-                    </IconContext.Provider>
+                    <AiOutlineMenu size={24}/>
                 </div>
             </div>
                 <div className={
@@ -60,9 +56,7 @@ const Navbar = () => {
                 }>
                 <div className="flex w-full items-counter justify-end">
                     <div onClick={handleNav} className="cursor-pointer">
-                        <IconContext.Provider value={{color:"white"}}>
-                            <AiOutlineClose size={25}/>
-                        </IconContext.Provider>
+                        <AiOutlineClose size={25}/>
                     </div>
                 </div>
                 <div className="flex-col py-4">
