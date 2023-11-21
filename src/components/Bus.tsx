@@ -70,8 +70,7 @@ const Bus = (props: any) => {
 
     useEffect(() => {
       busRouteChange(routeMiles);
-      chargerPowerChange(String(chargerPower));
-    },[busModel])
+    },[maxCapacity,summerRange,winterRange])
 
     function busRouteChange(miles: string){
       var error = document.getElementById("miles-error")
@@ -163,15 +162,16 @@ const Bus = (props: any) => {
 
     useEffect(() => {
       chargerPowerChange(String(chargerPower));
-    },[routeMiles])
+    },[kWhOneRouteSummer,kWhOneRouteWinter])
 
     function chargerPowerChange(power: string){
       const powerTemp = Number(power);
-      console.log(powerTemp)
       if(isNaN(powerTemp) || powerTemp == 0){
         setChargerPower(0);
         return;
       }
+      props.kWPerMonth(0-powerTemp);
+      props.kWPerMonth(powerTemp);
       setChargerPower(powerTemp);
       setSummerChargingTime(Math.round(kWhOneRouteSummer / powerTemp * 100)/100);
       setWinterChargingTime(Math.round(kWhOneRouteWinter / powerTemp * 100)/100);
@@ -180,18 +180,18 @@ const Bus = (props: any) => {
 
     useEffect(() => {
       resultingCosts();
-    },[busModel,routeMiles,timeOfDay,chargerPower])
+    },[kWhSummer,kWhWinter,kWhOneRouteSummer,kWhOneRouteWinter,chargerPower,routeMiles])
 
     function resultingCosts(){
       const summerCost = Math.round(kWhSummer*kWhOneRouteSummer*100)/100;
       const winterCost = Math.round(kWhWinter*kWhOneRouteWinter*100)/100;
       if(summerCost != totalElectrictyCostPerDaySummer){
         //remove current bus cost from total
-        props.summercost(0-totalElectrictyCostPerDaySummer)
-        props.summercost(summerCost)
+        props.summercost(0-totalElectrictyCostPerDaySummer);
+        props.summercost(summerCost);
       }
       if(winterCost != totalElectrictyCostPerDayWinter){
-        props.wintercost(0-totalElectrictyCostPerDayWinter)
+        props.wintercost(0-totalElectrictyCostPerDayWinter);
         props.wintercost(winterCost);
       }
       setTotalElectricityCostPerDaySummer(summerCost);
@@ -312,7 +312,7 @@ const Bus = (props: any) => {
               <h1 className="font-bold">Resulting Costs</h1>
               <h1>Total Electricity Cost per Day in Summer: $<span className="font-bold">{totalElectrictyCostPerDaySummer}</span></h1>
               <h1>Total Electricity Cost per Day in Winter: $<span className="font-bold">{totalElectrictyCostPerDayWinter}</span></h1>
-              <h1>Demand Charger: $<span className="font-bold">{demandCharge}</span></h1>
+              <h1>Demand Charge: $<span className="font-bold">{demandCharge}</span></h1>
               <h1>Total Diesel Cost per Day: $<span className="font-bold">{dieselCostPerDay}</span></h1>
             </div>
           </div>
