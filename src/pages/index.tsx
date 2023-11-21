@@ -1,17 +1,9 @@
-import { IconContext } from "react-icons";
-import {BiPlus} from "react-icons/bi";
 import Bus from "../components/Bus";
-import {useState} from "react";
+import {useState, useContext} from "react";
+import { DataContext } from "~/contexts/dataContext";
 
 export default function Home() {
-  const [busCount, setBusCount] = useState(1);
-  const busAccordion = ["1"];
-
-  const addBus = () => {
-    setBusCount(busCount+1)
-    busAccordion.push(busCount.toString())
-    console.log(busCount)
-};
+  const context = useContext(DataContext);
 
   return (
     <section className="w-screen h-screen content-center">
@@ -20,12 +12,6 @@ export default function Home() {
             <div className="join join-vertical w-full">
               <Bus id="1"/>
               <Bus id="2"/>
-            </div>
-            <div className="inline-flex float-right pt-4 px-4" onClick={addBus}>
-              <button className="text-blue-700 font-bold">
-                Add Bus
-              </button>
-              <BiPlus size={24}/>
             </div>
             <h1 className="p-10">
               Total Electricity Cost per Day in Summer: <span className="text-blue-700">$4.25</span><br/>
