@@ -34,24 +34,26 @@ const BusAccordion = (props: any) => {
     const monthlySavings = savings.map((save, index)=>
     <td key={index} className="text-sm">${save}</td>)
 
-    const addToMaxkWPerMonth = (data: number) => {
+    async function addToMaxkWPerMonth(data: number){
         const k = Math.round((maxkWPerMonth+data)*100)/100;
         setMaxkWPerMonth(k);
     }
 
-    const addToWinterDailyCost = (data: number) => {
+    async function addToWinterDailyCost(data: number){
+        console.log(winterDailyCost);
         const w = Math.round((winterDailyCost+data)*100)/100;
+        console.log(w);
         setWinterDailyCost(w);
         setWinterMonthCost(Math.round((w*22)*100)/100);
     }
 
-    const addToSummerDailyCost = (data: number) => {
+    async function addToSummerDailyCost(data: number){
         const s = Math.round((summerDailyCost+data)*100)/100;
         setSummerDailyCost(s);
         setSummerMonthCost(Math.round((s*22)*100)/100);
     }
 
-    const addToDieselDailyCost = (data: number) => {
+    async function addToDieselDailyCost(data: number){
         const d = Math.round((dieselCost+data)*100)/100;
         setDieselCostPerDay(d);
         const dieselCostPerMonth = Math.round((d*22)*100)/100 

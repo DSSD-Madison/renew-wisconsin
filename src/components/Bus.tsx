@@ -63,7 +63,7 @@ const Bus = (props: any) => {
       const maxRangeTemp = buses[model].maxRange;
       setBusMaxRange(maxRangeTemp);
       const sumRange = Math.round((maxRangeTemp * 0.9)*100)/100;
-      const winRange = Math.round((maxRangeTemp * 0.8)*100)/100; //Could be incorrect in excel sheet
+      const winRange = Math.round((maxRangeTemp * 0.8)*100)/100;
       setSummerRange(sumRange);
       setWinterRange(winRange);
     }
@@ -170,8 +170,7 @@ const Bus = (props: any) => {
         setChargerPower(0);
         return;
       }
-      props.kWPerMonth(0-powerTemp);
-      props.kWPerMonth(powerTemp);
+      props.kWPerMonth(powerTemp-chargerPower);
       setChargerPower(powerTemp);
       setSummerChargingTime(Math.round(kWhOneRouteSummer / powerTemp * 100)/100);
       setWinterChargingTime(Math.round(kWhOneRouteWinter / powerTemp * 100)/100);
@@ -187,12 +186,10 @@ const Bus = (props: any) => {
       const winterCost = Math.round(kWhWinter*kWhOneRouteWinter*100)/100;
       if(summerCost != totalElectrictyCostPerDaySummer){
         //remove current bus cost from total
-        props.summercost(0-totalElectrictyCostPerDaySummer);
-        props.summercost(summerCost);
+        props.summercost(summerCost-totalElectrictyCostPerDaySummer);
       }
       if(winterCost != totalElectrictyCostPerDayWinter){
-        props.wintercost(0-totalElectrictyCostPerDayWinter);
-        props.wintercost(winterCost);
+        props.wintercost(winterCost-totalElectrictyCostPerDayWinter);
       }
       setTotalElectricityCostPerDaySummer(summerCost);
       setTotalElectricityCostPerDayWinter(winterCost);
@@ -209,8 +206,7 @@ const Bus = (props: any) => {
       }
       const d = Math.round((Number(routeMiles)/6.0)*4*100)/100
       if(d != dieselCostPerDay){
-        props.dieselcost(0-dieselCostPerDay)
-        props.dieselcost(d)
+        props.dieselcost(d-dieselCostPerDay)
       }
       setDieselCostPerDay(d)
     }
