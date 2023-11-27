@@ -35,7 +35,7 @@ const Navbar = () => {
                         </Link>
                         <Link href="/input">
                             <li className="ml-6 uppercase hover:border-b text-xl text-white p-2">
-                                Input
+                                Assumptions
                             </li>
                         </Link>
                         <Link href="/admin">
