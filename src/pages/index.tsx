@@ -1,6 +1,7 @@
 import Bus from "../components/Bus";
 import {useState, useContext} from "react";
 import { DataContext } from "~/contexts/dataContext";
+import BusAccordion from "~/components/BusAccordion";
 
 export default function Home() {
   const context = useContext(DataContext);

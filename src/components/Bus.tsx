@@ -5,8 +5,8 @@ const Bus = (props: any) => {
 
     const buses = {
       "N/A": {
-        "maxChargeCapacity": '',
-        "maxRange": ''
+        "maxChargeCapacity": 0,
+        "maxRange": 0
       },
       "All American RE Electric": {
         "maxChargeCapacity": 155,
@@ -96,15 +96,15 @@ const Bus = (props: any) => {
         return;
       }
       setRouteMiles(String(milesTemp));
-      const oneRouteSummer = Math.round((maxCapacity / summerRange) * milesTemp*100)/100;
-      const oneRouteWinter = Math.round((maxCapacity / winterRange) * milesTemp*100)/100;
-      if(isNaN(summerRange) || isNaN(winterRange) || isNaN(maxCapacity)){
+      if(isNaN(summerRange) || isNaN(winterRange) || isNaN(maxCapacity) || summerRange == 0 || winterRange == 0){
         var error = document.getElementById("miles-error")
         if(error){
           error.innerHTML = "Please select a bus model"
         }
         return;
       }
+      const oneRouteSummer = Math.round((maxCapacity / summerRange) * milesTemp*100)/100;
+      const oneRouteWinter = Math.round((maxCapacity / winterRange) * milesTemp*100)/100;
       const maxCapSummer = maxCapacity*0.9;
       const maxCapWinter = maxCapacity*0.8;
       if((oneRouteSummer > maxCapSummer) && oneRouteWinter > maxCapWinter){

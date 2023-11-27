@@ -11,29 +11,32 @@ const BusAccordion = (props: any) => {
     const [dieselCost, setDieselCostPerDay] = useState(0);
     const [dieselMonthCost, setDieselCostPerMonth] = useState(0);
     const [maxkWPerMonth, setMaxkWPerMonth] = useState(0);
+    const [demandCharge, setDemandCharge] = useState(0);
+    const [districtDemandCharges, setDistrictDemandCharges] = useState<any[]>([0,0,0,0,0,0,0,0,0,0,0,0]);
+    const [csbCostPerMonths, setCSBCostPerMonths] = useState<number[]>([0,0,0,0,0,0,0,0,0,0,0,0]);
+    const [totalCSBSummer, setTotalCSBSummer] = useState(0);
+    const [totalCSBWinter, setTotalCSBWinter] = useState(0);
+    const [dieselCosts, setDieselCosts] = useState<number[]>([0,0,0,0,0,0,0,0,0,0,0,0]);
+    const [savings, setSavings] = useState<number[]>([0,0,0,0,0,0,0,0,0,0,0,0]);
+    const [annualCSBCost, setAnnualCSBCost] = useState(0);
+    const [annualDieselCost, setAnnualDieselCost] = useState(0);
+    const [annualSavings, setAnnualSavings] = useState(0);
+
     const monthDailyCosts = [winterDailyCost,winterDailyCost,winterDailyCost,winterDailyCost,winterDailyCost,0,0,0,summerDailyCost,winterDailyCost,winterDailyCost,winterDailyCost]
     const kWhPerDayCost = monthDailyCosts.map((cost, index)=>
-    <td key={index} className="text-base">${cost}</td>)
-    var districtDemandCharges = [0,0,0,0,0,0,0,0,0,0,0,0]
-    var csbCostPerMonths = [winterMonthCost,winterMonthCost,winterMonthCost,winterMonthCost,winterMonthCost,0,0,0,summerMonthCost,winterMonthCost,winterMonthCost,winterMonthCost]
-    if(maxkWPerMonth > 25){
-        districtDemandCharges = [maxkWPerMonth*3.50,maxkWPerMonth*3.50,maxkWPerMonth*3.50,maxkWPerMonth*3.50,maxkWPerMonth*3.50,maxkWPerMonth*3.50,maxkWPerMonth*3.50,maxkWPerMonth*3.50,maxkWPerMonth*3.50,maxkWPerMonth*3.50,maxkWPerMonth*3.50,maxkWPerMonth*3.50]
-        csbCostPerMonths = [(maxkWPerMonth*3.50)+winterMonthCost,(maxkWPerMonth*3.50)+winterMonthCost,(maxkWPerMonth*3.50)+winterMonthCost,(maxkWPerMonth*3.50)+winterMonthCost,(maxkWPerMonth*3.50)+winterMonthCost,(maxkWPerMonth*3.50)+0,(maxkWPerMonth*3.50)+0,(maxkWPerMonth*3.50)+0,(maxkWPerMonth*3.50)+summerMonthCost,(maxkWPerMonth*3.50)+winterMonthCost,(maxkWPerMonth*3.50)+winterMonthCost,(maxkWPerMonth*3.50)+winterMonthCost]
-    }
+    <td key={index} className="text-sm">${cost}</td>)
     const districtDemandCharge = districtDemandCharges.map((charge, index)=>
-    <td key={index} className="text-base">${charge}</td>)
+    <td key={index} className="text-sm">${charge}</td>)
     const csbCostPerMonth = csbCostPerMonths.map((csbCost, index)=>
-    <td key={index} className="text-base">${csbCost}</td>)
-    const dieselCosts = [dieselMonthCost,dieselMonthCost,dieselMonthCost,dieselMonthCost,dieselMonthCost,0,0,0,dieselMonthCost,dieselMonthCost,dieselMonthCost,dieselMonthCost]
+    <td key={index} className="text-sm">${csbCost}</td>)
     const dieselCostPerMonth = dieselCosts.map((cost, index)=>
-    <td key={index} className="text-base">${cost}</td>)
-    const savings = [dieselMonthCost-winterMonthCost,dieselMonthCost-winterMonthCost,dieselMonthCost-winterMonthCost,dieselMonthCost-winterMonthCost,dieselMonthCost-winterMonthCost,0-summerMonthCost,0-summerMonthCost,0-summerMonthCost,dieselMonthCost-summerMonthCost,dieselMonthCost-winterMonthCost,dieselMonthCost-winterMonthCost,dieselMonthCost-winterMonthCost]
-    const monthlySavings = dieselCosts.map((save, index)=>
-    <td key={index} className="text-base">${save}</td>)
+    <td key={index} className="text-sm">${cost}</td>)
+    const monthlySavings = savings.map((save, index)=>
+    <td key={index} className="text-sm">${save}</td>)
 
     const addToMaxkWPerMonth = (data: number) => {
-        const k = Math.round((maxkWPerMonth+data)*100)/100
-        setMaxkWPerMonth(k)
+        const k = Math.round((maxkWPerMonth+data)*100)/100;
+        setMaxkWPerMonth(k);
     }
 
     const addToWinterDailyCost = (data: number) => {
@@ -49,9 +52,55 @@ const BusAccordion = (props: any) => {
     }
 
     const addToDieselDailyCost = (data: number) => {
-        const d = Math.round((dieselCost+data)*100)/100
-        setDieselCostPerDay(d)
-        setDieselCostPerMonth(Math.round((d*22)*100)/100)
+        const d = Math.round((dieselCost+data)*100)/100;
+        setDieselCostPerDay(d);
+        const dieselCostPerMonth = Math.round((d*22)*100)/100 
+        setDieselCostPerMonth(dieselCostPerMonth);
+        setDieselCosts([dieselCostPerMonth,dieselCostPerMonth,dieselCostPerMonth,dieselCostPerMonth,dieselCostPerMonth,0,0,0,dieselCostPerMonth,dieselCostPerMonth,dieselCostPerMonth,dieselCostPerMonth]);
+        const sumAnnualDieselCost = Math.round(dieselCostPerMonth*9*100)/100;
+        setAnnualDieselCost(sumAnnualDieselCost);
+    }
+
+    useEffect(() => {
+        calculateDistrictDemandCharge();
+    },[maxkWPerMonth])
+
+    const calculateDistrictDemandCharge = () => {
+        if(maxkWPerMonth > 25){
+            const demandCharge = Math.round(3.5*maxkWPerMonth*100)/100;
+            setDistrictDemandCharges([demandCharge,demandCharge,demandCharge,demandCharge,demandCharge,demandCharge,demandCharge,demandCharge,demandCharge,demandCharge,demandCharge,demandCharge])
+            setDemandCharge(demandCharge);
+        }
+        else{
+            setDistrictDemandCharges([0,0,0,0,0,0,0,0,0,0,0,0]);
+            setDemandCharge(0);
+        }
+    }
+
+    useEffect(() => {
+        calculateCSBCostPerMonth();
+    },[maxkWPerMonth, winterMonthCost, summerMonthCost, demandCharge])
+
+    const calculateCSBCostPerMonth = () => {
+        const totalCSBWinter = Math.round((demandCharge+winterMonthCost)*100)/100;
+        const totalCSBSummer = Math.round((demandCharge+summerMonthCost)*100)/100;
+        setCSBCostPerMonths([totalCSBWinter,totalCSBWinter,totalCSBWinter,totalCSBWinter,totalCSBWinter,demandCharge,demandCharge,demandCharge,totalCSBSummer,totalCSBWinter,totalCSBWinter,totalCSBWinter]);
+        setTotalCSBSummer(totalCSBSummer);
+        setTotalCSBWinter(totalCSBWinter);
+        const sumAnnualCSBCost = Math.round(((totalCSBWinter*8)+totalCSBSummer+(demandCharge*3))*100)/100;
+        setAnnualCSBCost(sumAnnualCSBCost);
+    }
+
+    useEffect(() => {
+        calculateSavings();
+    },[dieselMonthCost,totalCSBSummer,totalCSBWinter])
+
+    const calculateSavings = () => {
+        const savingsWinter = Math.round((dieselMonthCost-totalCSBWinter)*100)/100;
+        const savingsSummer = Math.round((dieselMonthCost-totalCSBSummer)*100)/100;
+        const nonOperating = Math.round((0-totalCSBSummer)*100)/100;
+        setSavings([savingsWinter,savingsWinter,savingsWinter,savingsWinter,savingsWinter,nonOperating,nonOperating,nonOperating,savingsSummer,savingsWinter,savingsWinter,savingsWinter]);
+        setAnnualSavings(Math.round(((savingsWinter*8)+savingsSummer+(nonOperating*3))*100)/100)
     }
     
     return(
@@ -89,23 +138,23 @@ const BusAccordion = (props: any) => {
                     </thead> 
                     <tbody>
                     <tr>
-                        <th className="text-base font-normal">$/kWh per Day</th> 
+                        <th className="text-sm font-normal">$/kWh per Day</th> 
                         {kWhPerDayCost}
                     </tr>
                     <tr>
-                        <th className="text-base font-normal">District Demand Charge per Month</th>
+                        <th className="text-sm font-normal">District Demand Charge per Month</th>
                         {districtDemandCharge}
                     </tr>
                     <tr>
-                        <th className="text-base font-normal">Total CSB Cost per Month</th> 
+                        <th className="text-sm font-normal">Total CSB Cost per Month</th> 
                         {csbCostPerMonth}
                     </tr>
                     <tr>
-                        <th className="text-base font-normal">Total Diesel Cost per Month</th> 
+                        <th className="text-sm font-normal">Total Diesel Cost per Month</th> 
                         {dieselCostPerMonth}
                     </tr>
                     <tr>
-                        <th className="text-base font-normal">Total Monthly Savings</th> 
+                        <th className="text-sm font-normal">Total Monthly Savings</th> 
                         {monthlySavings}
                     </tr>
                     </tbody> 
@@ -114,9 +163,9 @@ const BusAccordion = (props: any) => {
             </div>
             <div className="m-7">
                 <h1 className="text-2xl font-bold">Annual Costs</h1>
-                <h1>Annual CSB Cost: </h1>
-                <h1>Annual Diesel Cost: </h1>
-                <h1>Annual Savings: </h1>
+                <h1>Annual CSB Cost: ${annualCSBCost}</h1>
+                <h1>Annual Diesel Cost: ${annualDieselCost}</h1>
+                <h1>Annual Savings: ${annualSavings}</h1>
             </div>
         </div>
     );
