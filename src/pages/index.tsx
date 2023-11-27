@@ -1,10 +1,9 @@
-import { IconContext } from "react-icons";
-import {BiPlus} from "react-icons/bi";
 import Bus from "../components/Bus";
-import {useState} from "react";
-import BusAccordion from "~/components/BusAccordion";
+import {useState, useContext} from "react";
+import { DataContext } from "~/contexts/dataContext";
 
 export default function Home() {
+  const context = useContext(DataContext);
 
   return (
     <section className="w-screen h-screen content-center">
