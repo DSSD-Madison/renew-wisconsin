@@ -13,7 +13,7 @@ const Navbar = () => {
     }
 
     return (
-        <nav className="fixed justify-center w-full h-16 bg-[#f39c12] z-0 relative">
+        <nav className="fixed justify-center w-full h-16 bg-[#f39c12] z-0 relative z-50">
             <div className="flex justify-between items-center h-full w-full px-4 2xl:px-16">
                 <div className="flex md:text-xl sm:text-sm text-white">
                     <FaBusAlt size={24}/>

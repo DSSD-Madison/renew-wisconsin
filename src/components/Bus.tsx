@@ -63,7 +63,7 @@ const Bus = (props: any) => {
       const maxRangeTemp = buses[model].maxRange;
       setBusMaxRange(maxRangeTemp);
       const sumRange = Math.round((maxRangeTemp * 0.9)*100)/100;
-      const winRange = Math.round((maxRangeTemp * 0.8)*100)/100; //Could be incorrect in excel sheet
+      const winRange = Math.round((maxRangeTemp * 0.8)*100)/100;
       setSummerRange(sumRange);
       setWinterRange(winRange);
     }
@@ -170,8 +170,7 @@ const Bus = (props: any) => {
         setChargerPower(0);
         return;
       }
-      props.kWPerMonth(0-powerTemp);
-      props.kWPerMonth(powerTemp);
+      props.kWPerMonth(powerTemp-chargerPower, props.id, powerTemp);
       setChargerPower(powerTemp);
       setSummerChargingTime(Math.round(kWhOneRouteSummer / powerTemp * 100)/100);
       setWinterChargingTime(Math.round(kWhOneRouteWinter / powerTemp * 100)/100);
@@ -187,32 +186,29 @@ const Bus = (props: any) => {
       const winterCost = Math.round(kWhWinter*kWhOneRouteWinter*100)/100;
       if(summerCost != totalElectrictyCostPerDaySummer){
         //remove current bus cost from total
-        props.summercost(0-totalElectrictyCostPerDaySummer);
-        props.summercost(summerCost);
+        props.summercost(summerCost-totalElectrictyCostPerDaySummer, props.id, summerCost);
       }
       if(winterCost != totalElectrictyCostPerDayWinter){
-        props.wintercost(0-totalElectrictyCostPerDayWinter);
-        props.wintercost(winterCost);
+        props.wintercost(winterCost-totalElectrictyCostPerDayWinter, props.id, winterCost);
       }
       setTotalElectricityCostPerDaySummer(summerCost);
       setTotalElectricityCostPerDayWinter(winterCost);
       if(timeOfDay == "Daytime"){
         if(chargerPower > 39){
-          setDemandCharge(Math.round(chargerPower*12*100)/100)
+          setDemandCharge(Math.round(chargerPower*12*100)/100);
         }
         else{
-          setDemandCharge(0.00)
+          setDemandCharge(0.00);
         }
       }
       else{
-        setDemandCharge(0.00)
+        setDemandCharge(0.00);
       }
-      const d = Math.round((Number(routeMiles)/6.0)*4*100)/100
+      const d = Math.round((Number(routeMiles)/6.0)*4*100)/100;
       if(d != dieselCostPerDay){
-        props.dieselcost(0-dieselCostPerDay)
-        props.dieselcost(d)
+        props.dieselcost(d-dieselCostPerDay, props.id, d);
       }
-      setDieselCostPerDay(d)
+      setDieselCostPerDay(d);
     }
 
     return(
