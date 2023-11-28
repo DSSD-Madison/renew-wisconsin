@@ -13,6 +13,7 @@ const DataContextProvider = ({ children }: { children: ReactNode }) => {
   const [rates, setRates] = useState<any[]>([]);
   const [assumptions, setAssumptions] = useState<any[]>([]);
 
+  const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
     const fetchBusData = async () => {
       const qBus = query(collection(db, "buses"));
@@ -61,31 +62,13 @@ const DataContextProvider = ({ children }: { children: ReactNode }) => {
       setOperationSchedule(operationScheduleArrTmp);
       setRates(ratesArrTmp);
       setAssumptions(assumptionsArrTmp);
-
-      console.log(
-        busDataArrTmp
-      )
-      console.log(
-        summerChargingArrTmp
-      )
-      console.log(
-        winterChargingArrTmp
-      )
-      console.log(
-        operationScheduleArrTmp
-      )
-      console.log(
-        ratesArrTmp
-      )
-      console.log(
-        assumptionsArrTmp
-      )
+      setLoading(false);
     };
 
     fetchBusData();
   }, []);
 
-  const value = { busData, summerCharging, winterCharging, operationSchedule, rates, assumptions };
+  const value = { loading, busData, summerCharging, winterCharging, operationSchedule, rates, assumptions };
 
   return (
     <DataContext.Provider value={value}>{children}</DataContext.Provider>
