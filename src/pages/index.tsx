@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <section className="w-screen h-screen content-center">
         <div className="flex justify-center items-center h-full w-full">
-          <div className="bg-white justify-center h-5/6 w-9/12 mt-14 rounded-lg">
+          <div className="justify-center h-5/6 w-9/12 mt-14">
             <BusAccordion/>
           </div>
         </div>
