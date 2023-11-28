@@ -33,7 +33,7 @@ const Navbar = () => {
                                 Equipment
                             </li>
                         </Link>
-                        <Link href="/input">
+                        <Link href="/assumptions">
                             <li className="ml-6 uppercase hover:border-b text-xl text-white p-2">
                                 Assumptions
                             </li>
@@ -75,11 +75,11 @@ const Navbar = () => {
                                 Equipment
                             </li>
                         </Link>
-                        <Link href="/input">
+                        <Link href="/assumptions">
                             <li 
                             onClick={() => setMenuOpen(false)}
                             className="py-4 cursor-pointer text-white">
-                                Input
+                                Assumptions
                             </li>
                         </Link>
                         <Link href="/admin">
