@@ -34,12 +34,12 @@ const BusAccordion = (props: any) => {
     const monthlySavings = savings.map((save, index)=>
     <td key={index} className="text-sm">${save}</td>)
 
-    async function addToMaxkWPerMonth(data: number){
+    const addToMaxkWPerMonth = (data: number) => {
         const k = Math.round((maxkWPerMonth+data)*100)/100;
         setMaxkWPerMonth(k);
     }
 
-    async function addToWinterDailyCost(data: number){
+    const addToWinterDailyCost = (data: number) => {
         console.log(winterDailyCost);
         const w = Math.round((winterDailyCost+data)*100)/100;
         console.log(w);
@@ -47,13 +47,13 @@ const BusAccordion = (props: any) => {
         setWinterMonthCost(Math.round((w*22)*100)/100);
     }
 
-    async function addToSummerDailyCost(data: number){
+    const addToSummerDailyCost = (data: number) => {
         const s = Math.round((summerDailyCost+data)*100)/100;
         setSummerDailyCost(s);
         setSummerMonthCost(Math.round((s*22)*100)/100);
     }
 
-    async function addToDieselDailyCost(data: number){
+    const addToDieselDailyCost = (data: number) => {
         const d = Math.round((dieselCost+data)*100)/100;
         setDieselCostPerDay(d);
         const dieselCostPerMonth = Math.round((d*22)*100)/100 
@@ -114,7 +114,7 @@ const BusAccordion = (props: any) => {
             <div className="place-content-stretch">
             <button className="text-blue-700 font-bold">
                 Add Bus
-              </button>
+            </button>
             </div>
             <div className="m-7">
             <h1 className="text-2xl font-bold">Monthly Costs</h1>
