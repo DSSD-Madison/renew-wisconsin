@@ -132,7 +132,6 @@ const BusAccordion = (props: any) => {
     const calculateDistDemandCharge = () => {
         if(maxkWPerMonth > 25){
             const demandCharge = Math.round(3.5*maxkWPerMonth*100)/100;
-            //console.log(maxkWPerMonth)
             setDistDemandCharges([demandCharge,demandCharge,demandCharge,demandCharge,demandCharge,demandCharge,demandCharge,demandCharge,demandCharge,demandCharge,demandCharge,demandCharge]);
             setDistDemandCharge(demandCharge);
         }
@@ -177,11 +176,9 @@ const BusAccordion = (props: any) => {
     const deleteBus = () => {
         if(busCount > 1){
             let length = list.length;
-            //let removekWPerMonth = list[length-1].kWPerMonth;
             let removeWinter = list[length-1].winterCost;
             let removeSummer = list[length-1].summerCost;
             let removeDiesel = list[length-1].dieselCost;
-            //addToMaxkWPerMonth(-1*removekWPerMonth,length,removekWPerMonth);
             addToWinterDailyCost(-1*removeWinter,length,removeWinter);
             addToSummerDailyCost(-1*removeSummer,length,removeSummer);
             addToDieselDailyCost(-1*removeDiesel,length,removeDiesel);
