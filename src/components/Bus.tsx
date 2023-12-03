@@ -107,7 +107,7 @@ const Bus = (props: any) => {
       const oneRouteWinter = Math.round((maxCapacity / winterRange) * milesTemp*100)/100;
       const maxCapSummer = maxCapacity*0.9;
       const maxCapWinter = maxCapacity*0.8;
-      if((oneRouteSummer > maxCapSummer) && oneRouteWinter > maxCapWinter){
+      if((oneRouteSummer > maxCapSummer) && (oneRouteWinter > maxCapWinter)){
         if(error){
           error.innerHTML = "Route is too long for "+busModel+"'s battery capacity in Summer and Winter"
         }
@@ -170,7 +170,10 @@ const Bus = (props: any) => {
         setChargerPower(0);
         return;
       }
-      props.kWPerMonth(powerTemp-chargerPower, props.id, powerTemp);
+      props.kWPerMonth(props.id, powerTemp);
+      if(timeOfDay=="Daytime"){
+        props.onPeakDemand(powerTemp-chargerPower, props.id, powerTemp);
+      }
       setChargerPower(powerTemp);
       setSummerChargingTime(Math.round(kWhOneRouteSummer / powerTemp * 100)/100);
       setWinterChargingTime(Math.round(kWhOneRouteWinter / powerTemp * 100)/100);
@@ -298,18 +301,18 @@ const Bus = (props: any) => {
                 <div className="w-full m-4">
                   <span className="text-sm">Summer Charging Time: <span className="font-bold">{summerChargingTime}</span> hours</span><br/>
                   <span className="text-sm">Winter Charging Time: <span className="font-bold">{winterChargingTime}</span> hours</span><br/>
-                  <span className="text-sm">On-Peak $/kW Summer: $<span className="font-bold">{onPeakSummer}</span></span><br/>
-                  <span className="text-sm">$/kWh Summer: $<span className="font-bold">{kWhSummer}</span></span><br/>
-                  <span className="text-sm">On-Peak $/kW Winter: $<span className="font-bold">{onPeakWinter}</span></span><br/>
-                  <span className="text-sm">$/kWh Winter: $<span className="font-bold">{kWhWinter}</span></span><br/>
+                  <span className="text-sm">On-Peak $/kW Summer: <span className="font-bold">${onPeakSummer}</span></span><br/>
+                  <span className="text-sm">$/kWh Summer: <span className="font-bold">${kWhSummer}</span></span><br/>
+                  <span className="text-sm">On-Peak $/kW Winter: <span className="font-bold">${onPeakWinter}</span></span><br/>
+                  <span className="text-sm">$/kWh Winter: <span className="font-bold">${kWhWinter}</span></span><br/>
                 </div>
             </div>
             <div>
               <h1 className="font-bold">Resulting Costs</h1>
-              <h1>Total Electricity Cost per Day in Summer: $<span className="font-bold">{totalElectrictyCostPerDaySummer}</span></h1>
-              <h1>Total Electricity Cost per Day in Winter: $<span className="font-bold">{totalElectrictyCostPerDayWinter}</span></h1>
-              <h1>Demand Charge: $<span className="font-bold">{demandCharge}</span></h1>
-              <h1>Total Diesel Cost per Day: $<span className="font-bold">{dieselCostPerDay}</span></h1>
+              <h1>Total Electricity Cost per Day in Summer: <span className="font-bold">${totalElectrictyCostPerDaySummer}</span></h1>
+              <h1>Total Electricity Cost per Day in Winter: <span className="font-bold">${totalElectrictyCostPerDayWinter}</span></h1>
+              <h1>Demand Charge: <span className="font-bold">${demandCharge}</span></h1>
+              <h1>Total Diesel Cost per Day: <span className="font-bold">${dieselCostPerDay}</span></h1>
             </div>
           </div>
         </div>
