@@ -28,8 +28,8 @@ const Calendar: React.FC<CalendarProps> = ({ monthsData }) => {
             </thead> 
             <tbody>
             <tr>
-                {sortedMonths.map((month) => (
-                <td className={monthsData[month] ? 'bg-green-600' : 'bg-red-700'}>   </td>
+                {sortedMonths.map((month, index) => (
+                <td key={index} className={monthsData[month] ? 'bg-green-600' : 'bg-red-700'}>   </td>
                 ))}
             </tr>
             

@@ -3,7 +3,7 @@ import {useState, useEffect} from 'react';
 
 const Bus = (props: any) => {
 
-    const buses = {
+  const buses: { [key: string]: { maxChargeCapacity: number; maxRange: number } } = {
       "N/A": {
         "maxChargeCapacity": 0,
         "maxRange": 0
@@ -58,6 +58,7 @@ const Bus = (props: any) => {
     const [dieselCostPerDay, setDieselCostPerDay] = useState(0);
 
     function busModelChange(model: string) {
+      console.log(Object.keys(buses))
       setBusModel(model);
       setMaxCapacity(buses[model].maxChargeCapacity);
       const maxRangeTemp = buses[model].maxRange;
