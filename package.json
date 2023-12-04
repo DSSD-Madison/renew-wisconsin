@@ -1,4 +1,5 @@
 {
+  "name": "renew-wisconsin",
   "private": true,
   "scripts": {
     "dev": "next dev",
