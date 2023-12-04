@@ -69,7 +69,6 @@ export default function Admin() {
           <>
             <div className="bg-white p-8 rounded-lg shadow-md">
               <h2 className="text-2xl font-semibold mb-4">Sign In</h2>
-              <h3>Current testing email is dssd-madison@dssdglobal.org and password is testing123</h3>
               <br />
               <input
                 type="email"
