@@ -18,8 +18,14 @@ export default function Input() {
     const summerCharges: SummerWinterCharges = context.rates[1];
     const winterCharges: SummerWinterCharges = context.rates[2];
     const districtCharge: DistrictDemandCharge = context.rates[0];
-    console.log(context.rates);
 
+    const assumptions = context.assumptions;
+    const sumEff = Number(assumptions[0]['summer_efficiency']) * 100;
+    const winEff = Number(assumptions[0]['winter_efficiency']) * 100;
+    const summerOp = Number(assumptions[0]['summer_months_in_op']);
+    const winterOp = Number(assumptions[0]['winter_months_in_op']);
+    const milesPerGallon = Number(assumptions[0]['diesel_bus_miles_per_gallon']);
+    const dollarsPerGallon = Number(assumptions[0]['diesel_dollar_per_gallon']);
     
      /*
 
@@ -67,12 +73,12 @@ export default function Input() {
                   </thead>
                   <tbody>
                     <tr>
-                      <td>90</td>
-                      <td>80</td>
-                      <td>1</td>
-                      <td>8</td>
-                      <td>6.0</td>
-                      <td>$4.00</td>
+                      <td>{sumEff}%</td>
+                      <td>{winEff}%</td>
+                      <td>{summerOp}</td>
+                      <td>{winterOp}</td>
+                      <td>{milesPerGallon}</td>
+                      <td>${dollarsPerGallon}</td>
                     </tr>
                   </tbody>
                 </table>

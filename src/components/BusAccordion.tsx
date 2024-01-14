@@ -65,6 +65,7 @@ const BusAccordion = (props: any) => {
     }
 
     const addToOnPeakkWPerMonth = (data: number, id: number, newVal: number) => {
+        //I feel like this code might be wrong because we need to find the maximum
         const op = Math.round((onPeakkWPerMonth+data)*100)/100;
         setOnPeakkWPerMonth(op);
         let index = id - 1;

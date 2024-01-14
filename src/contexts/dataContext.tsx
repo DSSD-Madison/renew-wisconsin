@@ -28,7 +28,7 @@ const DataContextProvider = ({ children }: { children: ReactNode }) => {
       const querySnapshotWC = await getDocs(qWC);
       const querySnapshotOS = await getDocs(qOS);
       const querySnapshotR = await getDocs(qR);
-      const querySnapshotA = await getDocs(qWC);
+      const querySnapshotA = await getDocs(qA);
 
       const busDataArrTmp: any[] = [];
       const summerChargingArrTmp: any[] = [];
