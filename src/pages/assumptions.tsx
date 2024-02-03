@@ -20,38 +20,13 @@ export default function Input() {
     const districtCharge: DistrictDemandCharge = context.rates[0];
 
     const assumptions = context.assumptions;
-    const sumEff = Number(assumptions[0]['summer_efficiency']) * 100;
-    const winEff = Number(assumptions[0]['winter_efficiency']) * 100;
-    const summerOp = Number(assumptions[0]['summer_months_in_op']);
-    const winterOp = Number(assumptions[0]['winter_months_in_op']);
-    const milesPerGallon = Number(assumptions[0]['diesel_bus_miles_per_gallon']);
-    const dollarsPerGallon = Number(assumptions[0]['diesel_dollar_per_gallon']);
-    
-     /*
-
-    Summer efficiency
-    winter efficiency
-    summer months in operation
-    winter months in operation
-    diesel bus miles/gallon
-    On peak and off peak pricing 
-
-    Summer: 
-    - On-Peak $/kWh : 0.0885
-    - Off-Peak $/kWh : 0.0540
-    - On-Peak $/kW : 13.00
-
-    Winter:
-    - On-Peak $/kWh : 0.08
-    - Off-Peak $/kWh : 0.0540
-    - On-Peak $/kW : 11.00
-
-    demand charges table
-    Max kW per month - all charger powers combined
-    $/kW for Dist Demand, from on/off peak pricing table
-    Potential Dist Demand = Max kW * $/kW for Dist Demand
-
-    */
+    const sumEff = Number(assumptions[0]['summer_efficiency'] != undefined ? assumptions[0]['summer_efficiency'] : 0.9) * 100;
+    const winEff = Number(assumptions[0]['winter_efficiency'] != undefined ? assumptions[0]['winter_efficiency'] : 0.8) * 100;
+    const summerOp = Number(assumptions[0]['summer_months_in_op'] != undefined ? assumptions[0]['summer_months_in_op'] : 1);
+    const winterOp = Number(assumptions[0]['winter_months_in_op'] != undefined ? assumptions[0]['winter_months_in_op'] : 8);
+    const milesPerGallon = Number(assumptions[0]['diesel_bus_miles_per_gallon'] != undefined ? assumptions[0]['diesel_bus_miles_per_gallon'] : 6);
+    const dollarsPerGallon = Number(assumptions[0]['diesel_dollar_per_gallon'] != undefined ? assumptions[0]['diesel_dollar_per_gallon'] : 3.72);
+  
     return (
       
       <section className="w-screen h-screen content-center">

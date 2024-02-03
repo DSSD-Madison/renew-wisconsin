@@ -68,10 +68,10 @@ const Bus = (props: any) => {
   chargers.unshift("N/A");
 
   const assumptions = context.assumptions;
-  const winterEff = Number(assumptions[0]['winter_efficiency']);
-  const summerEff = Number(assumptions[0]['summer_efficiency']);
-  const milesPerGal = Number(assumptions[0]['diesel_bus_miles_per_gallon']);
-  const dollarsPerGal = Number(assumptions[0]['diesel_dollar_per_gallon']);
+  const winterEff = Number(assumptions[0]['winter_efficiency'] != undefined ? assumptions[0]['winter_efficiency'] : 0.8);
+  const summerEff = Number(assumptions[0]['summer_efficiency'] != undefined ? assumptions[0]['summer_efficiency'] : 0.9);
+  const milesPerGal = Number(assumptions[0]['diesel_bus_miles_per_gallon'] ? assumptions[0]['diesel_bus_miles_per_gallon'] : 6);
+  const dollarsPerGal = Number(assumptions[0]['diesel_dollar_per_gallon'] ? assumptions[0]['diesel_dollar_per_gallon'] : 3.72);
 
   const rates = context.rates;
   const summerRates = rates[1];
@@ -162,18 +162,18 @@ const Bus = (props: any) => {
     function timeOfDayChange(time: string) {
       if(time=="Daytime"){
         setTimeOfDay("Daytime");
-        setOnPeakSummer(summerRates['on_peak_kW']);
-        setOnPeakWinter(winterRates['on_peak_kW']);
-        setkWhSummer(summerRates['on_peak_kWh']);
-        setkWhWinter(winterRates['on_peak_kWh']);
+        setOnPeakSummer(summerRates['on_peak_kW'] != undefined ? summerRates['on_peak_kW'] : 13);
+        setOnPeakWinter(winterRates['on_peak_kW'] != undefined ? winterRates['on_peak_kW'] : 11);
+        setkWhSummer(summerRates['on_peak_kWh'] != undefined ? summerRates['on_peak_kWh'] : 0.0885);
+        setkWhWinter(winterRates['on_peak_kWh'] != undefined ? winterRates['on_peak_kWh'] : 0.08);
         return;
       }
       if(time=="Overnight"){
         setTimeOfDay("Overnight");
         setOnPeakSummer(0.00);
         setOnPeakWinter(0.00);
-        setkWhSummer(summerRates['off_peak_kWh']);
-        setkWhWinter(winterRates['off_peak_kWh']);
+        setkWhSummer(summerRates['off_peak_kWh'] != undefined ? summerRates['off_peak_kWh'] : 0.054);
+        setkWhWinter(winterRates['off_peak_kWh'] != undefined ? winterRates['off_peak_kWh'] : 0.054);
         return;
       }
       setTimeOfDay("N/A");
