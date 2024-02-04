@@ -1,78 +1,94 @@
 import React from 'react';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useContext} from 'react';
+import { DataContext } from "../contexts/dataContext";
+import LoadingSpinner from './equipment/loading_bar';
 
 const Bus = (props: any) => {
 
-  const buses: { [key: string]: { maxChargeCapacity: number; maxRange: number } } = {
-      "N/A": {
-        "maxChargeCapacity": 0,
-        "maxRange": 0
-      },
-      "All American RE Electric": {
-        "maxChargeCapacity": 155,
-        "maxRange": 120
-      },
-      "Vision Electric": {
-        "maxChargeCapacity": 155,
-        "maxRange": 120
-      },
-      "Electric CE Series 1": {
-        "maxChargeCapacity": 210,
-        "maxRange": 135
-      },
-      "Electric CE Series 2": {
-        "maxChargeCapacity": 315,
-        "maxRange": 200
-      },
-      "LionC": {
-        "maxChargeCapacity": 168,
-        "maxRange": 155
-      },
-      "Saf-Tliner C2 Jouley": {
-        "maxChargeCapacity": 226,
-        "maxRange": 138
-      }
-    }
+  const context = useContext(DataContext);
 
-    const [busModel, setBusModel] = useState('');
-    const [maxCapacity, setMaxCapacity] = useState(0);
-    const [maxRange, setBusMaxRange] = useState(0);
-    const [summerRange, setSummerRange] = useState(0);
-    const [winterRange, setWinterRange] = useState(0);
-    const [routeMiles, setRouteMiles] = useState('0');
-    const [kWhOneRouteSummer, setkWhOneRouteSummer] = useState(0);
-    const [kWhOneRouteWinter, setkWhOneRouteWinter] = useState(0);
-    const [maxRoutesSummer, setMaxRoutesSummer] = useState(0);
-    const [maxRoutesWinter, setMaxRoutesWinter] = useState(0);
-    const [timeOfDay, setTimeOfDay] = useState('N/A');
-    const [chargerPower, setChargerPower] = useState(0);
-    const [summerChargingTime, setSummerChargingTime] = useState(0);
-    const [winterChargingTime, setWinterChargingTime] = useState(0);
-    const [onPeakSummer, setOnPeakSummer] = useState(0);
-    const [kWhSummer, setkWhSummer] = useState(0);
-    const [onPeakWinter, setOnPeakWinter] = useState(0);
-    const [kWhWinter, setkWhWinter] = useState(0);
-    const [totalElectrictyCostPerDaySummer, setTotalElectricityCostPerDaySummer] = useState(0);
-    const [totalElectrictyCostPerDayWinter, setTotalElectricityCostPerDayWinter] = useState(0);
-    const [demandCharge, setDemandCharge] = useState(0);
-    const [dieselCostPerDay, setDieselCostPerDay] = useState(0);
+  const [busModel, setBusModel] = useState('');
+  const [maxCapacity, setMaxCapacity] = useState(0);
+  const [maxRange, setBusMaxRange] = useState(0);
+  const [summerRange, setSummerRange] = useState(0);
+  const [winterRange, setWinterRange] = useState(0);
+  const [routeMiles, setRouteMiles] = useState('0');
+  const [kWhOneRouteSummer, setkWhOneRouteSummer] = useState(0);
+  const [kWhOneRouteWinter, setkWhOneRouteWinter] = useState(0);
+  const [maxRoutesSummer, setMaxRoutesSummer] = useState(0);
+  const [maxRoutesWinter, setMaxRoutesWinter] = useState(0);
+  const [timeOfDay, setTimeOfDay] = useState('N/A');
+  const [chargerPower, setChargerPower] = useState(0);
+  const [summerChargingTime, setSummerChargingTime] = useState(0);
+  const [winterChargingTime, setWinterChargingTime] = useState(0);
+  const [onPeakSummer, setOnPeakSummer] = useState(0);
+  const [kWhSummer, setkWhSummer] = useState(0);
+  const [onPeakWinter, setOnPeakWinter] = useState(0);
+  const [kWhWinter, setkWhWinter] = useState(0);
+  const [totalElectrictyCostPerDaySummer, setTotalElectricityCostPerDaySummer] = useState(0);
+  const [totalElectrictyCostPerDayWinter, setTotalElectricityCostPerDayWinter] = useState(0);
+  const [demandCharge, setDemandCharge] = useState(0);
+  const [dieselCostPerDay, setDieselCostPerDay] = useState(0);
 
-    function busModelChange(model: string) {
-      console.log(Object.keys(buses))
-      setBusModel(model);
-      setMaxCapacity(buses[model].maxChargeCapacity);
-      const maxRangeTemp = buses[model].maxRange;
-      setBusMaxRange(maxRangeTemp);
-      const sumRange = Math.round((maxRangeTemp * 0.9)*100)/100;
-      const winRange = Math.round((maxRangeTemp * 0.8)*100)/100;
-      setSummerRange(sumRange);
-      setWinterRange(winRange);
-    }
+  useEffect(() => {
+    busRouteChange(routeMiles);
+  },[maxCapacity,summerRange,winterRange])
 
-    useEffect(() => {
-      busRouteChange(routeMiles);
-    },[maxCapacity,summerRange,winterRange])
+  useEffect(() => {
+    chargerPowerChange(String(chargerPower));
+  },[kWhOneRouteSummer,kWhOneRouteWinter])
 
+  useEffect(() => {
+    resultingCosts();
+  },[kWhSummer,kWhWinter,kWhOneRouteSummer,kWhOneRouteWinter,chargerPower,routeMiles])
+
+  if (context.loading) {
+    return <LoadingSpinner></LoadingSpinner>
+  }
+
+  //Collect necessary information from data context
+  const buses = new Map();
+  let busModels: string[] = [];
+  buses.set("N/A", {maxChargeCapacity: 0, maxRange: 0});
+  busModels.push("N/A");
+
+  const busData = context.busData;
+
+  for(let i = 0; i < busData.length; i++){
+    buses.set(busData[i]['model'], {maxChargeCapacity: busData[i]['maximum_charge_capacity'], maxRange: busData[i]['maximum_range']});
+    busModels.push(busData[i]['model']);
+  }
+
+  const chargerData = context.summerCharging;
+  let chargers: string[] = [];
+  for (let i = 0; i < chargerData.length; i++){
+    chargers.push(chargerData[i]['Certified Charger Output (kW)']);
+  }
+  chargers.sort();
+  chargers.unshift("N/A");
+
+  const assumptions = context.assumptions;
+  const winterEff = Number(assumptions[0]['winter_efficiency'] != undefined ? assumptions[0]['winter_efficiency'] : 0.8);
+  const summerEff = Number(assumptions[0]['summer_efficiency'] != undefined ? assumptions[0]['summer_efficiency'] : 0.9);
+  const milesPerGal = Number(assumptions[0]['diesel_bus_miles_per_gallon'] ? assumptions[0]['diesel_bus_miles_per_gallon'] : 6);
+  const dollarsPerGal = Number(assumptions[0]['diesel_dollar_per_gallon'] ? assumptions[0]['diesel_dollar_per_gallon'] : 3.72);
+
+  const rates = context.rates;
+  const summerRates = rates[1];
+  const winterRates = rates[2];
+
+  function busModelChange(model: string) {
+    setBusModel(model);
+    setMaxCapacity(buses.get(model).maxChargeCapacity);
+    const maxRangeTemp = buses.get(model).maxRange;
+    setBusMaxRange(maxRangeTemp);
+    const sumRange = Math.round((maxRangeTemp * summerEff)*100)/100;
+    const winRange = Math.round((maxRangeTemp * winterEff)*100)/100;
+    setSummerRange(sumRange);
+    setWinterRange(winRange);
+  }
+
+    
     function busRouteChange(miles: string){
       var error = document.getElementById("miles-error")
       if(error){
@@ -106,21 +122,28 @@ const Bus = (props: any) => {
       }
       const oneRouteSummer = Math.round((maxCapacity / summerRange) * milesTemp*100)/100;
       const oneRouteWinter = Math.round((maxCapacity / winterRange) * milesTemp*100)/100;
-      const maxCapSummer = maxCapacity*0.9;
-      const maxCapWinter = maxCapacity*0.8;
+      const maxCapSummer = maxCapacity*summerEff;
+      const maxCapWinter = maxCapacity*winterEff;
       if((oneRouteSummer > maxCapSummer) && (oneRouteWinter > maxCapWinter)){
         if(error){
+          console.log("Sum and Win")
           error.innerHTML = "Route is too long for "+busModel+"'s battery capacity in Summer and Winter"
         }
       }
-      if(oneRouteSummer > maxCapSummer){
-        if(error){
-          error.innerHTML = "Route is too long for "+busModel+"'s battery capacity in Summer"
+      else{
+        if(oneRouteSummer > maxCapSummer){
+          if(error){
+            console.log("Sum")
+            error.innerHTML = "Route is too long for "+busModel+"'s battery capacity in Summer"
+          }
         }
-      }
-      if(oneRouteWinter > maxCapWinter){
-        if(error){
-          error.innerHTML = "Route is too long for "+busModel+"'s battery capacity in Winter"
+        else{
+          if(oneRouteWinter > maxCapWinter){
+            if(error){
+              console.log("Win")
+              error.innerHTML = "Route is too long for "+busModel+"'s battery capacity in Winter"
+            }
+          }
         }
       }
       setkWhOneRouteSummer(oneRouteSummer);
@@ -130,8 +153,8 @@ const Bus = (props: any) => {
         setMaxRoutesWinter(0);
         return;
       }
-      const maxRoutesSummerTemp = Math.round((0.9 * maxCapacity) / oneRouteSummer*100)/100;
-      const maxRoutesWinterTemp = Math.round((0.8 * maxCapacity) / oneRouteWinter*100)/100;
+      const maxRoutesSummerTemp = Math.round((summerEff * maxCapacity) / oneRouteSummer*100)/100;
+      const maxRoutesWinterTemp = Math.round((winterEff * maxCapacity) / oneRouteWinter*100)/100;
       setMaxRoutesSummer(maxRoutesSummerTemp);
       setMaxRoutesWinter(maxRoutesWinterTemp);
     }
@@ -139,18 +162,18 @@ const Bus = (props: any) => {
     function timeOfDayChange(time: string) {
       if(time=="Daytime"){
         setTimeOfDay("Daytime");
-        setOnPeakSummer(13.00);
-        setOnPeakWinter(11.00);
-        setkWhSummer(0.0885);
-        setkWhWinter(0.08);
+        setOnPeakSummer(summerRates['on_peak_kW'] != undefined ? summerRates['on_peak_kW'] : 13);
+        setOnPeakWinter(winterRates['on_peak_kW'] != undefined ? winterRates['on_peak_kW'] : 11);
+        setkWhSummer(summerRates['on_peak_kWh'] != undefined ? summerRates['on_peak_kWh'] : 0.0885);
+        setkWhWinter(winterRates['on_peak_kWh'] != undefined ? winterRates['on_peak_kWh'] : 0.08);
         return;
       }
       if(time=="Overnight"){
         setTimeOfDay("Overnight");
         setOnPeakSummer(0.00);
         setOnPeakWinter(0.00);
-        setkWhSummer(0.054);
-        setkWhWinter(0.054);
+        setkWhSummer(summerRates['off_peak_kWh'] != undefined ? summerRates['off_peak_kWh'] : 0.054);
+        setkWhWinter(winterRates['off_peak_kWh'] != undefined ? winterRates['off_peak_kWh'] : 0.054);
         return;
       }
       setTimeOfDay("N/A");
@@ -161,14 +184,12 @@ const Bus = (props: any) => {
       return;
     }
 
-    useEffect(() => {
-      chargerPowerChange(String(chargerPower));
-    },[kWhOneRouteSummer,kWhOneRouteWinter])
-
     function chargerPowerChange(power: string){
       const powerTemp = Number(power);
       if(isNaN(powerTemp) || powerTemp == 0){
         setChargerPower(0);
+        setSummerChargingTime(0);
+        setWinterChargingTime(0);
         return;
       }
       props.kWPerMonth(props.id, powerTemp);
@@ -180,10 +201,6 @@ const Bus = (props: any) => {
       setWinterChargingTime(Math.round(kWhOneRouteWinter / powerTemp * 100)/100);
       return;
     }
-
-    useEffect(() => {
-      resultingCosts();
-    },[kWhSummer,kWhWinter,kWhOneRouteSummer,kWhOneRouteWinter,chargerPower,routeMiles])
 
     function resultingCosts(){
       const summerCost = Math.round(kWhSummer*kWhOneRouteSummer*100)/100;
@@ -197,9 +214,11 @@ const Bus = (props: any) => {
       }
       setTotalElectricityCostPerDaySummer(summerCost);
       setTotalElectricityCostPerDayWinter(winterCost);
+      //Can possibly simplify because onePeakSummer and onPeakWinter might be 0
       if(timeOfDay == "Daytime"){
         if(chargerPower > 39){
-          setDemandCharge(Math.round(chargerPower*12*100)/100);
+          const aveOnPeak = (onPeakSummer+onPeakWinter)/2;
+          setDemandCharge(Math.round(chargerPower*aveOnPeak*100)/100);
         }
         else{
           setDemandCharge(0.00);
@@ -208,7 +227,10 @@ const Bus = (props: any) => {
       else{
         setDemandCharge(0.00);
       }
-      const d = Math.round((Number(routeMiles)/6.0)*4*100)/100;
+      var d = 0;
+      if(Number(routeMiles) != 0){
+        d = Math.round((Number(routeMiles)/milesPerGal)*dollarsPerGal*100)/100;
+      }
       if(d != dieselCostPerDay){
         props.dieselcost(d-dieselCostPerDay, props.id, d);
       }
@@ -228,13 +250,9 @@ const Bus = (props: any) => {
                   <span className="label-text">Bus Model</span>
                 </label>
                 <select className="select select-bordered w-full max-w-xs" value={busModel} onChange={e => busModelChange(e.target.value)}>
-                  <option>N/A</option>
-                  <option>All American RE Electric</option>
-                  <option>Vision Electric</option>
-                  <option>Electric CE Series 1</option>
-                  <option>Electric CE Series 2</option>
-                  <option>LionC</option>
-                  <option>Saf-Tliner C2 Jouley</option>
+                  {busModels.map((model) => (
+                    <option key={model}>{model}</option>
+                  ))}
                 </select>
                 </div>
                 <div className="w-full m-4">
@@ -281,22 +299,9 @@ const Bus = (props: any) => {
                   <span className="label-text">Charger Power (kW)</span>
                 </label>
                 <select className="select select-bordered w-full max-w-xs" value={chargerPower} onChange={e => chargerPowerChange(e.target.value)}>
-                  <option>N/A</option>
-                  <option>7.2</option>
-                  <option>7.68</option>
-                  <option>9.6</option>
-                  <option>11.52</option>
-                  <option>12</option>
-                  <option>16.8</option>
-                  <option>19.2</option>
-                  <option>22.5</option>
-                  <option>30</option>
-                  <option>40</option>
-                  <option>50</option>
-                  <option>60</option>
-                  <option>160</option>
-                  <option>180</option>
-                  <option>240</option>
+                  {chargers.map((kW) => (
+                    <option key={kW}>{kW}</option>
+                  ))}
                 </select>
                 </div>
                 <div className="w-full m-4">
