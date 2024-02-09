@@ -231,27 +231,45 @@ const BusAccordion = (props: any) => {
                     </thead> 
                     <tbody>
                     <tr>
-                        <th className="text-sm font-normal">$/kWh per Day</th> 
+                        <th className="text-sm font-normal tooltip tooltip-right cursor-help" 
+                            data-tip="The daily cost to charge all operational buses for the corresponding month.">
+                            $/kWh per Day
+                        </th> 
                         {kWhPerDayCost}
                     </tr>
                     <tr>
-                        <th className="text-sm font-normal">On-Peak Demand Charge per Month</th> 
+                        <th className="text-sm font-normal tooltip tooltip-right cursor-help" 
+                            data-tip="This demand charge is applied based on the maximum number of kilowatts used at once by the selected chargers during On-Peak hours.">
+                            On-Peak Demand Charge per Month
+                        </th> 
                         {onPeakDemand}
                     </tr>
                     <tr>
-                        <th className="text-sm font-normal">Distribution Demand Charge per Month</th>
+                        <th className="text-sm font-normal tooltip tooltip-right cursor-help"
+                            data-tip="This charge is based on the maximum number of kilowatts used at once over the whole year. This charge will be the same for every month and is dependent on the time of the highest power use.">
+                            Distribution Demand Charge per Month
+                        </th>
                         {distDemandCharge}
                     </tr>
                     <tr>
-                        <th className="text-sm font-normal">Total CSB Cost per Month</th> 
+                        <th className="text-sm font-normal tooltip tooltip-right cursor-help"
+                            data-tip="The total electricity cost for all operational buses per month.">
+                            Total CSB Cost per Month
+                        </th> 
                         {csbCostPerMonth}
                     </tr>
                     <tr>
-                        <th className="text-sm font-normal">Total Diesel Cost per Month</th> 
+                        <th className="text-sm font-normal tooltip tooltip-right cursor-help" 
+                            data-tip="The mirrored total cost to fuel the same number of operational diesel buses per month.">
+                            Total Diesel Cost per Month
+                        </th> 
                         {dieselCostPerMonth}
                     </tr>
                     <tr>
-                        <th className="text-sm font-normal">Total Monthly Savings</th> 
+                        <th className="text-sm font-normal tooltip tooltip-right cursor-help"
+                            data-tip="The amount of money saved per month by utilizing electric school buses rather than diesel buses.">
+                            Total Monthly Savings
+                        </th> 
                         {monthlySavings}
                     </tr>
                     </tbody> 
