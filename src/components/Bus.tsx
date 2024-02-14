@@ -256,8 +256,12 @@ const Bus = (props: any) => {
                 </select>
                 </div>
                 <div className="w-full m-4">
-                  <span className="text-sm"><span className="font-bold">{busModel}</span> Battery Capacity: <span className="font-bold">{maxCapacity}</span> kWh</span><br/>
-                  <span className="text-sm">Summer Range: <span className="font-bold">{summerRange}</span> miles</span><br/>
+                  <span className="text-sm tooltip cursor-help" data-tip="The maximum amount of electricity (in kilowatt hours) the bus's battery can store.">
+                    <span className="font-bold">{busModel}</span> Battery Capacity:<span className="font-bold">{maxCapacity}</span> kWh
+                  </span><br/>
+                  <span className="text-sm tooltip cursor-help" data-tip="The maximum number of miles the bus will be able to drive off of one full capacity charge">
+                    Summer Range: <span className="font-bold">{summerRange}</span> miles
+                  </span><br/>
                   <span className="text-sm">Winter Range: <span className="font-bold">{winterRange}</span> miles</span><br/>
                 </div>
             </div>
@@ -282,7 +286,9 @@ const Bus = (props: any) => {
             <div className="md:inline-flex w-full">
               <div className="form-control w-full max-w-xs">
                 <label className="label">
-                  <span className="label-text">Time of Day</span>
+                  <span className="label-text tooltip tooltip-right cursor-help" data-tip="Select the time of day the bus will be charged during. Charging during On-Peak hours will result in higher monthly demand charges.">
+                    Time of Day
+                  </span>
                 </label>
                 <select className="select select-bordered" value={timeOfDay} onChange={e => timeOfDayChange(e.target.value)}>
                   <option>N/A</option>
@@ -296,7 +302,9 @@ const Bus = (props: any) => {
               </div>
               <div className="form-control w-full max-w-xs px-2">
                 <label className="label">
-                  <span className="label-text">Charger Power (kW)</span>
+                  <span className="label-text tooltip tooltip-right cursor-help" data-tip="The amount of power provided by the electric vehicle charger used to charge the bus. Chargers that provide more kilowatts on demand can recharge buses faster but will result in higher electric demand charges in addition to the electricity charges.">
+                    Charger Power (kW)
+                  </span>
                 </label>
                 <select className="select select-bordered w-full max-w-xs" value={chargerPower} onChange={e => chargerPowerChange(e.target.value)}>
                   {chargers.map((kW) => (
@@ -315,10 +323,18 @@ const Bus = (props: any) => {
             </div>
             <div>
               <h1 className="font-bold">Resulting Costs</h1>
-              <h1>Total Electricity Cost per Day in Summer: <span className="font-bold">${totalElectrictyCostPerDaySummer}</span></h1>
-              <h1>Total Electricity Cost per Day in Winter: <span className="font-bold">${totalElectrictyCostPerDayWinter}</span></h1>
-              <h1>Demand Charge: <span className="font-bold">${demandCharge}</span></h1>
-              <h1>Total Diesel Cost per Day: <span className="font-bold">${dieselCostPerDay}</span></h1>
+              <h1 className="tooltip tooltip-right cursor-help" data-tip="Cost of one kWh in the Summer * Number of kWhs used for 1 route in the Summer.">
+                Total Electricity Cost per Day in Summer: <span className="font-bold">${totalElectrictyCostPerDaySummer}</span>
+              </h1><br></br>
+              <h1 className="tooltip tooltip-right cursor-help" data-tip="Cost of one kWh in the Winter * Number of kWhs used for 1 route in the Winter.">
+                Total Electricity Cost per Day in Winter: <span className="font-bold">${totalElectrictyCostPerDayWinter}</span>
+              </h1><br></br>
+              <h1 className="tooltip tooltip-right cursor-help" data-tip="If the bus is being charged during On-Peak hours and requires 40 or more kWs, the demand charge will be Charger Power (kW) * The average of On-Peak $/kW in the summer and winter.">
+                Demand Charge: <span className="font-bold">${demandCharge}</span>
+              </h1><br></br>
+              <h1 className="tooltip tooltip-right cursor-help" data-tip="The cost to fuel a diesel bus that travels the same route in a day as the electric school bus.">
+                Total Diesel Cost per Day: <span className="font-bold">${dieselCostPerDay}</span>
+              </h1>
             </div>
           </div>
         </div>
