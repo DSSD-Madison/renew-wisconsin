@@ -42,8 +42,8 @@ export default function Equipment() {
     };
 
     const typedBusDataArray: BusData[] = context.data.buses.map((data: any) => new BusData(data));
-    const typedWinterChargingData: ChargingData[] = context.data.winter_charging.map((data: any) => new ChargingData(data));
-    const typedSummerChargingData: ChargingData[] = context.data.summer_charging.map((data: any) => new ChargingData(data));
+    const typedWinterChargingData: ChargingData[] = createTypedAndSortedChargingData(context.data.winter_charging);
+    const typedSummerChargingData: ChargingData[] = createTypedAndSortedChargingData(context.data.summer_charging);
 
     return (
         <section className="content-center">
