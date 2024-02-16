@@ -8,7 +8,7 @@ export default function Home() {
   const {buses} = useLocalStorage();
 
   return (
-    <section className="w-screen h-screen content-center">
+    <section className="content-center">
         <div className="flex justify-center items-center h-full w-full">
           <div className="justify-center h-5/6 w-9/12 mt-14">
             <BusAccordion/>
