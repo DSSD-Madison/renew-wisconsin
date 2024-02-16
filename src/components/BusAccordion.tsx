@@ -1,8 +1,11 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
 import Bus from '../components/Bus';
+import useLocalStorage from '~/hooks/useLocalStorage';
 
 const BusAccordion = (props: any) => {
+
+    const {buses, addBusLocal, updateBusesLocal} = useLocalStorage();
 
     const [winterDailyCost, setWinterDailyCost] = useState(0);
     const [summerDailyCost, setSummerDailyCost] = useState(0);

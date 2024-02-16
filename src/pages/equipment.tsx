@@ -15,7 +15,6 @@ export default function Equipment() {
     const typedWinterChargingData: ChargingData[] = context.winterCharging.map((data: any) => new ChargingData(data));
     const typedSummerChargingData: ChargingData[] = context.summerCharging.map((data: any) => new ChargingData(data));
 
-    console.log(context.winterCharging);
     return (
         <section className="w-screen h-screen content-center">
             <br/>

@@ -5,8 +5,7 @@ import BusAccordion from "~/components/BusAccordion";
 import useLocalStorage from "~/hooks/useLocalStorage";
 
 export default function Home() {
-
-  const [theme, setTheme] = useLocalStorage("theme","dark");
+  const {buses} = useLocalStorage();
 
   return (
     <section className="w-screen h-screen content-center">
@@ -14,7 +13,6 @@ export default function Home() {
           <div className="justify-center h-5/6 w-9/12 mt-14">
             <BusAccordion/>
           </div>
-          <button onClick={() => theme === "light" ? setTheme("dark") : setTheme("light")}>Toggle theme</button>
         </div>
     </section>
   )
