@@ -45,7 +45,7 @@ const Bus = (props: any) => {
   if (context.loading) {
     return <LoadingSpinner></LoadingSpinner>
   }
-
+  
   //Collect necessary information from data context
   const buses = new Map();
   let busModels: string[] = [];
@@ -64,7 +64,7 @@ const Bus = (props: any) => {
   for (let i = 0; i < chargerData.length; i++){
     chargers.push(chargerData[i]['Certified Charger Output (kW)']);
   }
-  chargers.sort();
+  chargers.sort((a,b) => parseFloat(a) - parseFloat(b));
   chargers.unshift("N/A");
 
   const assumptions = context.data.assumptions;
