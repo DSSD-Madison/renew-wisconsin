@@ -54,11 +54,12 @@ export const ChargingDataTable: React.FC<ChargerTableProps> = ({data1, data2}) =
                     Summer
                 </button>
             </div>
+            <div className="overflow-x-scroll text-xs md:text-sm">
             <table
-                className="min-w-full bg-white border border-gray-200 shadow-md rounded-md overflow-hidden z-10 relative">
+                className="w-full table-auto border-collapse bg-white border border-gray-200 shadow-md rounded-md z-10 relative">
                 <thead className="bg-gray-100 text-gray-700">
                 <tr>
-                    <th className="py-2 px-4">Charger Output (kW)</th>
+                    <th className="py-2 px-4 sticky left-0 h-fit bg-white">Charger Output (kW)</th>
                     <th className="py-2 px-4">All American RE Electric</th>
                     <th className="py-2 px-4">Electric CE Series 1</th>
                     <th className="py-2 px-4">Electric CE Series 2</th>
@@ -71,7 +72,8 @@ export const ChargingDataTable: React.FC<ChargerTableProps> = ({data1, data2}) =
                 <tbody className="text-gray-800">
                 {activeData.map((chargingData, index) => (
                     <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : ''}>
-                        <td className="py-2 px-4">{chargingData["Certified Charger Output (kW)"]}</td>
+                        <td key={index} className={index % 2 === 0 ? 'bg-gray-50 py-2 px-4 sticky left-0 h-fit' : 'bg-white py-2 px-4 sticky left-0 h-fit'}>
+                            {chargingData["Certified Charger Output (kW)"]}</td>
                         <td className="py-2 px-4">{chargingData["All American RE Electric"]}</td>
                         <td className="py-2 px-4">{chargingData["Electric CE Series 1"]}</td>
                         <td className="py-2 px-4">{chargingData["Electric CE Series 2"]}</td>
@@ -83,6 +85,7 @@ export const ChargingDataTable: React.FC<ChargerTableProps> = ({data1, data2}) =
                 ))}
                 </tbody>
             </table>
+            </div>
         </div>
     );
 };
