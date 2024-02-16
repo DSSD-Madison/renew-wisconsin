@@ -52,14 +52,14 @@ const Bus = (props: any) => {
   buses.set("N/A", {maxChargeCapacity: 0, maxRange: 0});
   busModels.push("N/A");
 
-  const busData = context.busData;
+  const busData = context.data.buses;
 
   for(let i = 0; i < busData.length; i++){
     buses.set(busData[i]['model'], {maxChargeCapacity: busData[i]['maximum_charge_capacity'], maxRange: busData[i]['maximum_range']});
     busModels.push(busData[i]['model']);
   }
 
-  const chargerData = context.summerCharging;
+  const chargerData = context.data.summer_charging;
   let chargers: string[] = [];
   for (let i = 0; i < chargerData.length; i++){
     chargers.push(chargerData[i]['Certified Charger Output (kW)']);
@@ -67,13 +67,13 @@ const Bus = (props: any) => {
   chargers.sort((a,b) => parseFloat(a) - parseFloat(b));
   chargers.unshift("N/A");
 
-  const assumptions = context.assumptions;
+  const assumptions = context.data.assumptions;
   const winterEff = Number(assumptions[0]['winter_efficiency'] != undefined ? assumptions[0]['winter_efficiency'] : 0.8);
   const summerEff = Number(assumptions[0]['summer_efficiency'] != undefined ? assumptions[0]['summer_efficiency'] : 0.9);
   const milesPerGal = Number(assumptions[0]['diesel_bus_miles_per_gallon'] ? assumptions[0]['diesel_bus_miles_per_gallon'] : 6);
   const dollarsPerGal = Number(assumptions[0]['diesel_dollar_per_gallon'] ? assumptions[0]['diesel_dollar_per_gallon'] : 3.72);
 
-  const rates = context.rates;
+  const rates = context.data.rates;
   const summerRates = rates[1];
   const winterRates = rates[2];
 

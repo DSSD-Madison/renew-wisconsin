@@ -4,13 +4,11 @@ import LoadingSpinner from "~/components/equipment/loading_bar";
 import {BusData, BusTable} from "~/components/equipment/busTable";
 import {ChargingData, ChargingDataTable} from "~/components/equipment/chargerTable";
 
-
 export default function Equipment() {
     const context = useContext(DataContext);
     if (context.loading) {
         return <h1><LoadingSpinner /></h1>
     }
-
 
     const extractNumericValue = (obj: any, propertyName: string): number | undefined => {
         const value = obj[propertyName];
@@ -43,14 +41,12 @@ export default function Equipment() {
         return typedChargingDataArray;
     };
 
+    const typedBusDataArray: BusData[] = context.data.buses.map((data: any) => new BusData(data));
+    const typedWinterChargingData: ChargingData[] = context.data.winter_charging.map((data: any) => new ChargingData(data));
+    const typedSummerChargingData: ChargingData[] = context.data.summer_charging.map((data: any) => new ChargingData(data));
 
-    const typedBusDataArray: BusData[] = context.busData.map((data: any) => new BusData(data));
-    const typedWinterChargingData: ChargingData[] = createTypedAndSortedChargingData(context.winterCharging);
-    const typedSummerChargingData: ChargingData[] = createTypedAndSortedChargingData(context.summerCharging);
-
-    console.log(context.winterCharging);
     return (
-        <section className="w-screen h-screen content-center">
+        <section className="content-center">
             <br/>
             <br/>
             <br/>
@@ -66,6 +62,5 @@ export default function Equipment() {
             <ChargingDataTable data1={typedWinterChargingData} data2={typedSummerChargingData}/>
             </div>
         </section>
-
     )
 }
