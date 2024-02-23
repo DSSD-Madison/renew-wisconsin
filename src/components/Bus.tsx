@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect, useContext } from "react";
 import { DataContext } from "../contexts/dataContext";
 import LoadingSpinner from "./equipment/loading_bar";
+import useLocalStorage from '~/hooks/useLocalStorage';
 
 const formatDecimalToTime = (dec: number) => {
   const date = new Date(0, 0);
@@ -10,7 +11,6 @@ const formatDecimalToTime = (dec: number) => {
     ? `${date.getHours()} hours and ${date.getMinutes()} minutes`
     : `${date.getMinutes()} minutes`;
 };
-import useLocalStorage from '~/hooks/useLocalStorage';
 
 const Bus = (props: any) => {
   const context = useContext(DataContext);
@@ -21,7 +21,7 @@ const Bus = (props: any) => {
   const [maxRange, setBusMaxRange] = useState(0);
   const [summerRange, setSummerRange] = useState(0);
   const [winterRange, setWinterRange] = useState(0);
-  const [routeMiles, setRouteMiles] = useState(0);
+  const [routeMiles, setRouteMiles] = useState("0");
   const [kWhOneRouteSummer, setkWhOneRouteSummer] = useState(0);
   const [kWhOneRouteWinter, setkWhOneRouteWinter] = useState(0);
   const [maxRoutesSummer, setMaxRoutesSummer] = useState(0);
@@ -34,22 +34,14 @@ const Bus = (props: any) => {
   const [kWhSummer, setkWhSummer] = useState(0);
   const [onPeakWinter, setOnPeakWinter] = useState(0);
   const [kWhWinter, setkWhWinter] = useState(0);
-  const [totalElectrictyCostPerDaySummer, setTotalElectricityCostPerDaySummer] =
-    useState(0);
-  const [totalElectrictyCostPerDayWinter, setTotalElectricityCostPerDayWinter] =
-    useState(0);
+  const [totalElectrictyCostPerDaySummer, setTotalElectricityCostPerDaySummer] = useState(0);
+  const [totalElectrictyCostPerDayWinter, setTotalElectricityCostPerDayWinter] = useState(0);
   const [demandCharge, setDemandCharge] = useState(0);
   const [dieselCostPerDay, setDieselCostPerDay] = useState(0);
 
   useEffect(() => {
-    busModelChange(busModel);
-    busRouteChange(String(routeMiles));
-    
-  })
-
-  useEffect(() => {
-    busRouteChange(String(routeMiles));
-  },[maxCapacity,summerRange,winterRange])
+    busRouteChange(routeMiles);
+  }, [maxCapacity, summerRange, winterRange]);
 
   useEffect(() => {
     chargerPowerChange(String(chargerPower));
@@ -73,16 +65,13 @@ const Bus = (props: any) => {
   //Collect necessary information from data context
   const busInformation = new Map();
   let busModels: string[] = [];
-  busInformation.set("N/A", {maxChargeCapacity: 0, maxRange: 0});
+  busInformation.set("N/A", { maxChargeCapacity: 0, maxRange: 0 });
   busModels.push("N/A");
 
   const busData = context.data.buses;
 
-  for(let i = 0; i < busData.length; i++){
-    busInformation.set(busData[i]['model'], {maxChargeCapacity: busData[i]['maximum_charge_capacity'], maxRange: busData[i]['maximum_range']});
-    busModels.push(busData[i]['model']);
   for (let i = 0; i < busData.length; i++) {
-    buses.set(busData[i]["model"], {
+    busInformation.set(busData[i]["model"], {
       maxChargeCapacity: busData[i]["maximum_charge_capacity"],
       maxRange: busData[i]["maximum_range"],
     });
@@ -241,6 +230,7 @@ const Bus = (props: any) => {
           ? winterRates["on_peak_kWh"]
           : 0.08,
       );
+      updateBusesLocal(props.id, "timeOfDay", "Daytime");
       return;
     }
     if (time == "Overnight") {
@@ -257,6 +247,7 @@ const Bus = (props: any) => {
           ? winterRates["off_peak_kWh"]
           : 0.054,
       );
+      updateBusesLocal(props.id, "timeOfDay", "Overnight");
       return;
     }
     setTimeOfDay("N/A");
@@ -264,6 +255,7 @@ const Bus = (props: any) => {
     setOnPeakWinter(0.0);
     setkWhSummer(0.0);
     setkWhWinter(0.0);
+    updateBusesLocal(props.id, "timeOfDay", "N/A");
     return;
   }
 
@@ -357,8 +349,7 @@ const Bus = (props: any) => {
               className="tooltip cursor-help text-sm"
               data-tip="The maximum amount of electricity (in kilowatt hours) the bus's battery can store."
             >
-              <span className="font-bold">{busModel}</span> Battery Capacity:
-              <span className="font-bold">{maxCapacity}</span> kWh
+              <span className="font-bold">{busModel}</span> Battery Capacity: <span className="font-bold">{maxCapacity}</span> kWh
             </span>
             <br />
             <span
