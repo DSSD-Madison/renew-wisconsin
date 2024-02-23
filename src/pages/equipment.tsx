@@ -4,20 +4,49 @@ import LoadingSpinner from "~/components/equipment/loading_bar";
 import {BusData, BusTable} from "~/components/equipment/busTable";
 import {ChargingData, ChargingDataTable} from "~/components/equipment/chargerTable";
 
-
 export default function Equipment() {
     const context = useContext(DataContext);
     if (context.loading) {
         return <h1><LoadingSpinner /></h1>
     }
 
-    const typedBusDataArray: BusData[] = context.busData.map((data: any) => new BusData(data));
-    const typedWinterChargingData: ChargingData[] = context.winterCharging.map((data: any) => new ChargingData(data));
-    const typedSummerChargingData: ChargingData[] = context.summerCharging.map((data: any) => new ChargingData(data));
+    const extractNumericValue = (obj: any, propertyName: string): number | undefined => {
+        const value = obj[propertyName];
+        if (typeof value === 'number') {
+            return value;
+        } else if (typeof value === 'string') {
+            const numericValue = parseFloat(value);
+            return isNaN(numericValue) ? undefined : numericValue;
+        } else {
+            return undefined;
+        }
+    };
 
-    console.log(context.winterCharging);
+    // Function to sort by "Certified Charger Output" numerically
+    const createTypedAndSortedChargingData = (chargingData: any[]): ChargingData[] => {
+        const typedChargingDataArray: ChargingData[] = chargingData.map((data: any) => new ChargingData(data));
+
+        // Sort by "Certified Charger Output (kW)"
+        typedChargingDataArray.sort((a, b) => {
+            const aValue = extractNumericValue(a, 'Certified Charger Output (kW)');
+            const bValue = extractNumericValue(b, 'Certified Charger Output (kW)');
+
+            if (aValue !== undefined && bValue !== undefined) {
+                return aValue - bValue;
+            } else {
+                return 0; 
+            }
+        });
+
+        return typedChargingDataArray;
+    };
+
+    const typedBusDataArray: BusData[] = context.data.buses.map((data: any) => new BusData(data));
+    const typedWinterChargingData: ChargingData[] = createTypedAndSortedChargingData(context.data.winter_charging);
+    const typedSummerChargingData: ChargingData[] = createTypedAndSortedChargingData(context.data.summer_charging);
+
     return (
-        <section className="w-screen h-screen content-center">
+        <section className="content-center">
             <br/>
             <br/>
             <br/>
@@ -33,6 +62,5 @@ export default function Equipment() {
             <ChargingDataTable data1={typedWinterChargingData} data2={typedSummerChargingData}/>
             </div>
         </section>
-
     )
 }

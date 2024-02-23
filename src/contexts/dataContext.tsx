@@ -1,74 +1,53 @@
 import React, { createContext, useEffect, useState, ReactNode } from 'react';
-import { db } from '~/config/firebaseConfig';
-import { collection, query, addDoc, getDocs } from "firebase/firestore";
+import { db, auth } from '~/config/firebaseConfig';
+import { collection, getDocs } from "firebase/firestore";
+import { onAuthStateChanged } from 'firebase/auth';
 
 export const DataContext = createContext<any>(undefined);
 
 const DataContextProvider = ({ children }: { children: ReactNode }) => {
-
-  const [busData, setBusData] = useState<any[]>([]);
-  const [summerCharging, setSummerCharging] = useState<any[]>([]);
-  const [winterCharging, setWinterCharging] = useState<any[]>([]);
-  const [operationSchedule, setOperationSchedule] = useState<any[]>([]);
-  const [rates, setRates] = useState<any[]>([]);
-  const [assumptions, setAssumptions] = useState<any[]>([]);
-
   const [loading, setLoading] = useState<boolean>(true);
+  const [authed, setAuthed] = useState<boolean>(false);
+  const [data, setData] = useState<any>({
+    busData: [],
+    summerCharging: [],
+    winterCharging: [],
+    operationSchedule: [],
+    rates: [],
+    assumptions: []
+  });
+
   useEffect(() => {
-    const fetchBusData = async () => {
-      const qBus = query(collection(db, "buses"));
-      const qWC = query(collection(db, "winter_charging"));
-      const qSC = query(collection(db, "summer_charging"));
-      const qOS = query(collection(db, "operation_schedule"));
-      const qR = query(collection(db, "rates"));
-      const qA = query(collection(db, "assumptions"));
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setAuthed(true);
+      } else {
+        setAuthed(false);
+      }
+    })
+  }, [])
 
-      const querySnapshotBus = await getDocs(qBus);
-      const querySnapshotSC = await getDocs(qSC);
-      const querySnapshotWC = await getDocs(qWC);
-      const querySnapshotOS = await getDocs(qOS);
-      const querySnapshotR = await getDocs(qR);
-      const querySnapshotA = await getDocs(qA);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const collections = ["buses", "winter_charging", "summer_charging", "operation_schedule", "rates", "assumptions"];
+        const queries = collections.map((collectionName) => collection(db, collectionName));
+        const snapshots = await Promise.all(queries.map((q) => getDocs(q)));
 
-      const busDataArrTmp: any[] = [];
-      const summerChargingArrTmp: any[] = [];
-      const winterChargingArrTmp: any[] = [];
-      const operationScheduleArrTmp: any[] = [];
-      const ratesArrTmp: any[] = [];
-      const assumptionsArrTmp: any[] = [];
-
-      querySnapshotBus.forEach((doc) => {
-        busDataArrTmp.push(doc.data());
-      });
-      querySnapshotSC.forEach((doc) => {
-        summerChargingArrTmp.push(doc.data());
-      });
-      querySnapshotWC.forEach((doc) => {
-        winterChargingArrTmp.push(doc.data());
-      });
-      querySnapshotOS.forEach((doc) => {
-        operationScheduleArrTmp.push(doc.data());
-      });
-      querySnapshotR.forEach((doc) => {
-        ratesArrTmp.push(doc.data());
-      });
-      querySnapshotA.forEach((doc) => {
-        assumptionsArrTmp.push(doc.data());
-      });
-  
-      setBusData(busDataArrTmp); 
-      setSummerCharging(summerChargingArrTmp);
-      setWinterCharging(winterChargingArrTmp);
-      setOperationSchedule(operationScheduleArrTmp);
-      setRates(ratesArrTmp);
-      setAssumptions(assumptionsArrTmp);
-      setLoading(false);
+        const newData = Object.fromEntries(snapshots.map((snapshot, index) => [collections[index], snapshot.docs.map(doc => doc.data())]));
+        setData(newData);
+        console.log("Data fetched:", newData);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      }
     };
 
-    fetchBusData();
+    fetchData();
   }, []);
 
-  const value = { loading, busData, summerCharging, winterCharging, operationSchedule, rates, assumptions };
+  const value = { loading, authed, setAuthed, data };
 
   return (
     <DataContext.Provider value={value}>{children}</DataContext.Provider>

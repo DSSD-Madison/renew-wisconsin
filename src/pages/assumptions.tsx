@@ -6,20 +6,18 @@ import {MonthsData} from "~/components/Calendar";
 import DemandChargesTable from "~/components/DemandChargesTable";
 import {SummerWinterCharges, DistrictDemandCharge} from "~/components/DemandChargesTable";
 
-
-
 export default function Input() {
     const context = useContext(DataContext);
     if (context.loading) {
       return <h1></h1>
     }
-    const monthsData: MonthsData = context.operationSchedule[0];
+    const monthsData: MonthsData = context.data.operation_schedule[0];
 
-    const summerCharges: SummerWinterCharges = context.rates[1];
-    const winterCharges: SummerWinterCharges = context.rates[2];
-    const districtCharge: DistrictDemandCharge = context.rates[0];
+    const districtCharge: DistrictDemandCharge = context.data.rates[0];
+    const summerCharges: SummerWinterCharges = context.data.rates[1];
+    const winterCharges: SummerWinterCharges = context.data.rates[2];
 
-    const assumptions = context.assumptions;
+    const assumptions = context.data.assumptions;
     const sumEff = Number(assumptions[0]['summer_efficiency'] != undefined ? assumptions[0]['summer_efficiency'] : 0.9) * 100;
     const winEff = Number(assumptions[0]['winter_efficiency'] != undefined ? assumptions[0]['winter_efficiency'] : 0.8) * 100;
     const summerOp = Number(assumptions[0]['summer_months_in_op'] != undefined ? assumptions[0]['summer_months_in_op'] : 1);
@@ -29,12 +27,12 @@ export default function Input() {
   
     return (
       
-      <section className="w-screen h-screen content-center">
+      <section className="content-center">
           <div className="flex justify-center items-center h-full w-full">
   
             <div className="flex-wrap">
               <div className='m-5 p-5'>
-                <h1>Efficiencies</h1>
+              <h1 className="text-2xl font-bold">Efficiencies</h1>
                 <table className="table">
                   <thead>
                     <tr>
@@ -60,11 +58,11 @@ export default function Input() {
               </div>
               
               <div className='m-5 p-5'>
-                <h1>Demand Charges</h1>
+                <h1 className="text-2xl font-bold">Demand Charges</h1>
                 <DemandChargesTable summerCharges={summerCharges} winterCharges={winterCharges} districtCharge={districtCharge} />
               </div>
               <div className='m-5 p-5'>
-                <h1>Bus Operating Months</h1>
+                <h1 className="text-2xl font-bold">Bus Operating Months</h1>
                 <Calendar monthsData={monthsData} />
               </div>
               

@@ -4,6 +4,8 @@ import {AiOutlineMenu, AiOutlineClose} from 'react-icons/ai';
 import {FaBusAlt} from 'react-icons/fa';
 import {IconContext} from "react-icons";
 import {useState} from 'react';
+import Image from 'next/image';
+import renewLogo from 'src/images/RENEWlogotransparent.png';
 
 const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false)
@@ -13,33 +15,37 @@ const Navbar = () => {
     }
 
     return (
-        <nav className="fixed justify-center w-full h-16 bg-[#f39c12] z-0 relative z-50">
+        <nav className="fixed justify-center w-full h-16 bg-[#d3d3d3] z-0 relative z-50">
             <div className="flex justify-between items-center h-full w-full px-4 2xl:px-16">
                 <div className="flex md:text-xl sm:text-sm text-white">
-                    <FaBusAlt size={24}/>
-                    <h1 className="px-2">
-                        Electric Bus Savings Calculator
-                    </h1>
+                <div className="w-30">
+                    <Image
+                        src={renewLogo}
+                        width={230}
+                        height={55}
+                        alt="Picture of the author"
+                    />
+                </div>
                 </div>
                 <div className="hidden sm:flex">
                     <ul className="hidden sm:flex">
                         <Link href="/">
-                            <li className="ml-6 uppercase hover:border-b text-xl text-white p-2">
+                            <li className="ml-6 uppercase hover:border-b text-xl text-[#163c66] border-[#163c66] font-bold p-2">
                                 Calculator
                             </li>
                         </Link>
                         <Link href="/equipment">
-                            <li className="ml-6 uppercase hover:border-b text-xl text-white p-2">
+                            <li className="ml-6 uppercase hover:border-b text-xl text-[#163c66] border-[#163c66] font-bold p-2">
                                 Equipment
                             </li>
                         </Link>
                         <Link href="/assumptions">
-                            <li className="ml-6 uppercase hover:border-b text-xl text-white p-2">
+                            <li className="ml-6 uppercase hover:border-b text-xl text-[#163c66] border-[#163c66] font-bold p-2">
                                 Assumptions
                             </li>
                         </Link>
                         <Link href="/admin">
-                            <li className="ml-6 uppercase hover:bg-[#2086b0] text-xl text-white bg-[#2495c4] p-2 rounded">
+                            <li className="ml-6 uppercase hover:bg-[#2495c4] text-xl text-white bg-[#163c66] p-2 font-bold rounded">
                                 Admin
                             </li>
                         </Link>
@@ -51,7 +57,7 @@ const Navbar = () => {
             </div>
                 <div className={
                     menuOpen
-                    ? "fixed left-0 top-0 w-[70%] sm:hidden h-screen bg-[#2495c4] p-10 ease-in duration-500"
+                    ? "fixed left-0 top-0 w-[70%] sm:hidden h-screen bg-[#163c66] p-10 ease-in duration-500"
                     : "fixed left-[-100%] top-0 p-10 ease-in duration-500 h-screen"
                 }>
                 <div className="flex w-full items-counter justify-end">
