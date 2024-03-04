@@ -144,11 +144,11 @@ export default function Admin() {
     }
   }
   return (
-    <section className="flex items-center justify-center">
+    <section className="flex items-center justify-center p-4">
       {context.loading ? ( // Conditionally render loading spinner
         <LoadingSpinner />
       ) : authed ? ( // If authenticated
-        <div className="flex-row items-center justify-center">
+        <div className="flex-row items-center justify-center w-2/3">
           {/* Edit Assumptions */}
           <div className="bg-white p-8 rounded-lg shadow-md mt-4">
             <h2 className="text-2xl font-semibold mb-4">Edit Assumptions</h2>
@@ -340,6 +340,7 @@ export default function Admin() {
                 </>
               )}
             </Field>
+            <div className="w-4">
             <Field>
               {(id) => (
                 <>
@@ -353,6 +354,7 @@ export default function Admin() {
                 </>
               )}
             </Field>
+            </div>
             <Field>
               {(id) => (
                 <>

@@ -32,7 +32,7 @@ export default function Input() {
   
             <div className="flex-wrap">
               <div className='m-5 p-5'>
-                <h1>Efficiencies</h1>
+              <h1 className="text-2xl font-bold">Efficiencies</h1>
                 <table className="table">
                   <thead>
                     <tr>
@@ -58,11 +58,11 @@ export default function Input() {
               </div>
               
               <div className='m-5 p-5'>
-                <h1>Demand Charges</h1>
+                <h1 className="text-2xl font-bold">Demand Charges</h1>
                 <DemandChargesTable summerCharges={summerCharges} winterCharges={winterCharges} districtCharge={districtCharge} />
               </div>
               <div className='m-5 p-5'>
-                <h1>Bus Operating Months</h1>
+                <h1 className="text-2xl font-bold">Bus Operating Months</h1>
                 <Calendar monthsData={monthsData} />
               </div>
               
