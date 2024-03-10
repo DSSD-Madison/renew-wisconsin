@@ -6,10 +6,11 @@ interface BusTableProps {
 
 export const BusTable: React.FC<BusTableProps> = ({data}) => {
     return (
-        <table className="min-w-full bg-white border border-gray-200 shadow-md rounded-md overflow-hidden">
+        <div className="overflow-x-scroll text-xs md:text-sm">
+        <table className="w-full table-auto border-collapse">
             <thead className="bg-gray-100 text-gray-700">
-            <tr>
-                <th className="py-2 px-4">Model</th>
+            <tr className="">
+                <th className="sticky left-0 h-fit bg-gray-50">Model</th>
                 <th className="py-2 px-4">Company</th>
                 <th className="py-2 px-4">Passenger Capacity</th>
                 <th className="py-2 px-4">GVWR</th>
@@ -24,8 +25,9 @@ export const BusTable: React.FC<BusTableProps> = ({data}) => {
             </thead>
             <tbody className="text-gray-800">
             {data.map((busData, index) => (
-                <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : ''}>
-                    <td className="py-2 px-4">{busData.model}</td>
+                <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                    <td className={index % 2 === 0 ? 'py-2 px-4 sticky left-0 h-fit bg-gray-50' : 'bg-white py-2 px-4 sticky left-0 h-fit'}
+                        key={index} >{busData.model}</td>
                     <td className="py-2 px-4">{busData.company}</td>
                     <td className="py-2 px-4">{busData.maximum_passenger_capacity === -1 ? 'UNKNOWN' : busData.maximum_passenger_capacity}</td>
                     <td className="py-2 px-4">{busData.gvwr === -1 ? 'UNKNOWN' : busData.gvwr}</td>
@@ -40,6 +42,7 @@ export const BusTable: React.FC<BusTableProps> = ({data}) => {
             ))}
             </tbody>
         </table>
+        </div>
     );
 };
 
