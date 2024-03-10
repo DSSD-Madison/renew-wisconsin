@@ -14,9 +14,11 @@ const formatDecimalToTime = (dec: number) => {
 
 const Bus = (props: any) => {
   const context = useContext(DataContext);
-  const {buses, addBusLocal, updateBusesLocal} = useLocalStorage();
+  const {buses, updateBusesLocal} = useLocalStorage();
 
-  const [busModel, setBusModel] = useState(buses[props.id] ? buses[props.id].busModel : "N/A");
+  const [dataLoaded, setDataLoaded] = useState(false);
+  //const [busModel, setBusModel] = useState(buses[props.id] ? buses[props.id].busModel : "N/A");
+  const [busModel, setBusModel] = useState("N/A");
   const [maxCapacity, setMaxCapacity] = useState(0);
   const [maxRange, setBusMaxRange] = useState(0);
   const [summerRange, setSummerRange] = useState(0);
@@ -38,6 +40,13 @@ const Bus = (props: any) => {
   const [totalElectrictyCostPerDayWinter, setTotalElectricityCostPerDayWinter] = useState(0);
   const [demandCharge, setDemandCharge] = useState(0);
   const [dieselCostPerDay, setDieselCostPerDay] = useState(0);
+
+  useEffect(() => {
+    if(buses[props.id] && dataLoaded){
+      console.log("hi");
+      busModelChange(buses[props.id].busModel)
+    }
+  });
 
   useEffect(() => {
     busRouteChange(routeMiles);
@@ -178,7 +187,6 @@ const Bus = (props: any) => {
     } else {
       if (oneRouteSummer > maxCapSummer) {
         if (error) {
-          console.log("Sum");
           error.innerHTML =
             "Route is too long for " +
             busModel +
@@ -187,7 +195,6 @@ const Bus = (props: any) => {
       } else {
         if (oneRouteWinter > maxCapWinter) {
           if (error) {
-            console.log("Win");
             error.innerHTML =
               "Route is too long for " +
               busModel +
@@ -327,7 +334,7 @@ const Bus = (props: any) => {
   return (
     <div className="collapse-arrow collapse join-item border border-base-300">
       <input type="radio" name="my-accordion-4" />
-      <div className="collapse-title text-xl font-medium">Bus #{props.id}</div>
+      <div className="collapse-title text-xl font-medium">School Bus #{props.id}</div>
       <div className="collapse-content">
         <div className="w-full md:inline-flex">
           <div className="form-control">
@@ -433,10 +440,10 @@ const Bus = (props: any) => {
             </select>
             <label className="label">
               <span className="label-text-alt">
-                Daytime (On-Peak): 9:00am-9:00pm
+                Daytime (On-Peak): <br></br>9:00am-9:00pm
               </span>
               <span className="label-text-alt">
-                Overnight (Off-Peak): 9:00pm-9:00am
+                Overnight (Off-Peak): <br></br>9:00pm-9:00am
               </span>
             </label>
           </div>
