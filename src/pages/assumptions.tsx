@@ -1,6 +1,6 @@
 import React from 'react';
 import { DataContext } from "~/contexts/dataContext";
-import {useState, useContext} from "react";
+import {useState, useContext, useEffect} from "react";
 import Calendar from "~/components/Calendar";
 import {MonthsData} from "~/components/Calendar";
 import DemandChargesTable from "~/components/DemandChargesTable";
@@ -25,6 +25,28 @@ export default function Input() {
     const milesPerGallon = Number(assumptions[0]['diesel_bus_miles_per_gallon'] != undefined ? assumptions[0]['diesel_bus_miles_per_gallon'] : 6);
     const dollarsPerGallon = Number(assumptions[0]['diesel_dollar_per_gallon'] != undefined ? assumptions[0]['diesel_dollar_per_gallon'] : 3.72);
   
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
+    useEffect(() => {
+        const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        setIsDarkMode(darkModeMediaQuery.matches);
+
+        const darkModeChangeListener = (event:any) => {
+            setIsDarkMode(event.matches);
+        };
+
+        darkModeMediaQuery.addEventListener('change', darkModeChangeListener);
+
+        return () => {
+            darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
+        };
+    }, []);
+
+    const titleStyle = {
+      fontSize: '2em',
+      marginBottom: '10px',
+    };
+
     return (
       
       <section className="content-center">
@@ -32,7 +54,7 @@ export default function Input() {
   
             <div className="flex-wrap">
               <div className='m-5 p-5'>
-              <h1 className="text-2xl font-bold">Efficiencies</h1>
+              <h1 style={{ ...titleStyle, color: isDarkMode ? 'white' : '#333' }} className="text-2xl">Efficiencies</h1>
                 <table className="table">
                   <thead>
                     <tr>
@@ -58,11 +80,11 @@ export default function Input() {
               </div>
               
               <div className='m-5 p-5'>
-                <h1 className="text-2xl font-bold">Demand Charges</h1>
+                <h1 style={{ ...titleStyle, color: isDarkMode ? 'white' : '#333' }} className="text-2xl">Demand Charges</h1>
                 <DemandChargesTable summerCharges={summerCharges} winterCharges={winterCharges} districtCharge={districtCharge} />
               </div>
               <div className='m-5 p-5'>
-                <h1 className="text-2xl font-bold">Bus Operating Months</h1>
+                <h1 style={{ ...titleStyle, color: isDarkMode ? 'white' : '#333' }} className="text-2xl">Bus Operating Months</h1>
                 <Calendar monthsData={monthsData} />
               </div>
               
