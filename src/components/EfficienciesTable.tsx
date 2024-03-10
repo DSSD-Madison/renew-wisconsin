@@ -1,49 +1,50 @@
 import React, { useState } from 'react';
 
 interface EfficienciesProps {
-  sumEff: number;
-  winEff: number;
-  summerOp: number;
-  winterOp: number;
-  milesPerGallon: number;
-  dollarsPerGallon: number;
+  summer_efficiency: number;
+  winter_efficiency: number;
+  summer_months_in_op: number;
+  winter_months_in_op: number;
+  diesel_bus_miles_per_gallon: number;
+  diesel_dollar_per_gallon: number;
   onValueChange: (key: string, value: number) => void;
 }
 
 const EfficienciesTable: React.FC<EfficienciesProps> = ({
-  sumEff,
-  winEff,
-  summerOp,
-  winterOp,
-  milesPerGallon,
-  dollarsPerGallon,
+  summer_efficiency,
+  winter_efficiency,
+  summer_months_in_op,
+  winter_months_in_op,
+  diesel_bus_miles_per_gallon,
+  diesel_dollar_per_gallon,
   onValueChange,
 }) => {
     const [editedValues, setEditedValues] = useState({
-    sumEff,
-    winEff,
-    summerOp,
-    winterOp,
-    milesPerGallon,
-    dollarsPerGallon,
+    summer_efficiency,
+    winter_efficiency,
+    summer_months_in_op,
+    winter_months_in_op,
+    diesel_bus_miles_per_gallon,
+    diesel_dollar_per_gallon,
     });
 
     const handleCellChange = (key: string, value: string) => {
         const parsedValue = parseFloat(value.replace(/[^0-9.-]+/g, ''));
         let clampedValue: any;
-    
+        let percentage: boolean = false;
         switch (key) {
-          case 'sumEff':
-          case 'winEff':
+          case 'summer_efficiency':
+          case 'winter_efficiency':
+            percentage = true;
             clampedValue = isNaN(parsedValue)
-              ? 0 : Math.max(1, Math.min(100, parsedValue));
+              ? 0 : Math.max(0, Math.min(100, parsedValue));
             break;
-          case 'summerOp':
-          case 'winterOp':
+          case 'summer_months_in_op':
+          case 'winter_months_in_op':
             clampedValue = isNaN(parsedValue) ? 0 : Math.max(0, Math.min(12, parsedValue));
             break;
-          case 'milesPerGallon':
-          case 'dollarsPerGallon':
+          case 'diesel_bus_miles_per_gallon':
+          case 'diesel_dollar_per_gallon':
             clampedValue = isNaN(parsedValue) ? 0 : parsedValue;
             break;
           default:
@@ -55,7 +56,8 @@ const EfficienciesTable: React.FC<EfficienciesProps> = ({
             [key]: clampedValue,
         }));
 
-        onValueChange(key, clampedValue);
+
+        onValueChange(key, percentage ? clampedValue * .01 : clampedValue);
     };
   return (
     <div className="overflow-x-auto">
@@ -75,48 +77,48 @@ const EfficienciesTable: React.FC<EfficienciesProps> = ({
             <td>
                 <input 
                 type="text"
-                value={editedValues.sumEff+'%'}
-                onChange={(e) => handleCellChange('sumEff', e.target.value)}
+                value={editedValues.summer_efficiency+'%'}
+                onChange={(e) => handleCellChange('summer_efficiency', e.target.value)}
                 className="input"
                 />
             </td>
             <td>
                 <input
                 type="text"
-                value={editedValues.winEff+'%'}
-                onChange={(e) => handleCellChange('winEff', e.target.value)}
+                value={editedValues.winter_efficiency+'%'}
+                onChange={(e) => handleCellChange('winter_efficiency', e.target.value)}
                 className="input"
                 />
             </td>
             <td>
                 <input
                 type="text"
-                value={editedValues.summerOp}
-                onChange={(e) => handleCellChange('summerOp', e.target.value)}
+                value={editedValues.summer_months_in_op}
+                onChange={(e) => handleCellChange('summer_months_in_op', e.target.value)}
                 className="input"
                 />
             </td>
             <td>
                 <input
                 type="text"
-                value={editedValues.winterOp}
-                onChange={(e) => handleCellChange('winterOp', e.target.value)}
+                value={editedValues.winter_months_in_op}
+                onChange={(e) => handleCellChange('winter_months_in_op', e.target.value)}
                 className="input"
                 />
             </td>
             <td>
                 <input
                 type="text"
-                value={editedValues.milesPerGallon}
-                onChange={(e) => handleCellChange('milesPerGallon', e.target.value)}
+                value={editedValues.diesel_bus_miles_per_gallon}
+                onChange={(e) => handleCellChange('diesel_bus_miles_per_gallon', e.target.value)}
                 className="input"
                 />
             </td>
             <td>
                 <input
-                type="text"
-                value={'$'+editedValues.dollarsPerGallon}
-                onChange={(e) => handleCellChange('dollarsPerGallon', e.target.value)}
+                type="number"
+                value={editedValues.diesel_dollar_per_gallon}
+                onChange={(e) => handleCellChange('diesel_dollar_per_gallon', e.target.value)}
                 className="input"
                 />
             </td>

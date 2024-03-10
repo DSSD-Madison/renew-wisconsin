@@ -11,10 +11,15 @@ const Calendar: React.FC<CalendarProps> = ({ monthsData, onMonthsDataChange }) =
   const [localMonthsData, setLocalMonthsData] = useState<MonthsData>(monthsData);
 
   const handleCellClick = (month: string) => {
-    setLocalMonthsData({
+
+    const newMonthsData = {
       ...localMonthsData,
       [month]: !localMonthsData[month],
-    });
+    }
+
+    setLocalMonthsData(newMonthsData);
+    
+    onMonthsDataChange(newMonthsData);
   };
 
   const sortedMonths = Object.keys(localMonthsData).sort((a, b) => {
@@ -35,13 +40,10 @@ const Calendar: React.FC<CalendarProps> = ({ monthsData, onMonthsDataChange }) =
     return monthOrder.indexOf(a) - monthOrder.indexOf(b);
   });
 
-  const handleBlur = () => {
-    onMonthsDataChange(localMonthsData);
-  };
 
   return (
     <div className="table">
-      <table onBlur={handleBlur}>
+      <table className="table w-full">
         <thead>
           <tr>
             {sortedMonths.map((month) => (

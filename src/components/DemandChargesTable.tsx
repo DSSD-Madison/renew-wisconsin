@@ -29,9 +29,8 @@ const DemandChargesTable: React.FC<DemandChargesTableProps> = ({
     districtCharge: districtCharge.district_demand_charge,
   });
 
-  const handleCellChange = (key: string, value: string) => {
-    const parsedValue = parseFloat(value.replace(/[^0-9.-]+/g, ''));
-    const clampedValue = isNaN(parsedValue) ? 0 : parsedValue;
+  const handleCellChange = (key: string, value: number) => {
+    const clampedValue = isNaN(value) ? 0 : value;
 
     if (key === 'districtCharge') {
       setEditedValues((prevState) => ({
@@ -82,57 +81,57 @@ const DemandChargesTable: React.FC<DemandChargesTableProps> = ({
           <tr>
             <td>
               <input
-                type="text"
+                type="number"
                 value={editedValues.summerCharges.on_peak_kWh}
-                onChange={(e) => handleCellChange('summer_on_peak_kWh', e.target.value)}
+                onChange={(e) => handleCellChange('summer_on_peak_kWh', Number(e.target.value))}
                 className="input w-full max-w-xs"
               />
             </td>
             <td>
               <input
-                type="text"
+                type="number"
                 value={editedValues.summerCharges.off_peak_kWh}
-                onChange={(e) => handleCellChange('summer_off_peak_kWh', e.target.value)}
+                onChange={(e) => handleCellChange('summer_off_peak_kWh', Number(e.target.value))}
                 className="input w-full max-w-xs"
               />
             </td>
             <td>
               <input
-                type="text"
+                type="number"
                 value={editedValues.summerCharges.on_peak_kW}
-                onChange={(e) => handleCellChange('summer_on_peak_kW', e.target.value)}
+                onChange={(e) => handleCellChange('summer_on_peak_kW', Number(e.target.value))}
                 className="input w-full max-w-xs"
               />
             </td>
             <td>
               <input
-                type="text"
+                type="number"
                 value={editedValues.winterCharges.on_peak_kWh}
-                onChange={(e) => handleCellChange('winter_on_peak_kWh', e.target.value)}
+                onChange={(e) => handleCellChange('winter_on_peak_kWh', Number(e.target.value))}
                 className="input w-full max-w-xs"
               />
             </td>
             <td>
               <input
-                type="text"
+                type="number"
                 value={editedValues.winterCharges.off_peak_kWh}
-                onChange={(e) => handleCellChange('winter_off_peak_kWh', e.target.value)}
+                onChange={(e) => handleCellChange('winter_off_peak_kWh', Number(e.target.value))}
                 className="input w-full max-w-xs"
               />
             </td>
             <td>
               <input
-                type="text"
+                type="number"
                 value={editedValues.winterCharges.on_peak_kW}
-                onChange={(e) => handleCellChange('winter_on_peak_kW', e.target.value)}
+                onChange={(e) => handleCellChange('winter_on_peak_kW', Number(e.target.value))}
                 className="input w-full max-w-xs"
               />
             </td>
             <td>
               <input
-                type="text"
+                type="number"
                 value={editedValues.districtCharge}
-                onChange={(e) => handleCellChange('districtCharge', e.target.value)}
+                onChange={(e) => handleCellChange('districtCharge', Number(e.target.value))}
                 className="input w-full max-w-xs"
               />
             </td>
