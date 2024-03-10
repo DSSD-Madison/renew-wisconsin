@@ -5,11 +5,12 @@ import Calendar from "~/components/Calendar";
 import {MonthsData} from "~/components/Calendar";
 import DemandChargesTable from "~/components/DemandChargesTable";
 import {SummerWinterCharges, DistrictDemandCharge} from "~/components/DemandChargesTable";
+import LoadingSpinner from "~/components/equipment/loading_bar"; // Assuming LoadingSpinner is in the same directory
 
 export default function Input() {
     const context = useContext(DataContext);
     if (context.loading) {
-      return <h1></h1>
+      return <LoadingSpinner />
     }
     const monthsData: MonthsData = context.data.operation_schedule[0];
 
