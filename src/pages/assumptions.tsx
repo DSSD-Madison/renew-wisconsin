@@ -5,6 +5,7 @@ import Calendar from "~/components/Calendar";
 import {MonthsData} from "~/components/Calendar";
 import DemandChargesTable from "~/components/DemandChargesTable";
 import {SummerWinterCharges, DistrictDemandCharge} from "~/components/DemandChargesTable";
+import EfficienciesTable from '~/components/EfficienciesTable';
 
 export default function Input() {
     const context = useContext(DataContext);
@@ -13,18 +14,40 @@ export default function Input() {
     }
     const monthsData: MonthsData = context.data.operation_schedule[0];
 
-    const districtCharge: DistrictDemandCharge = context.data.rates[0];
-    const summerCharges: SummerWinterCharges = context.data.rates[1];
-    const winterCharges: SummerWinterCharges = context.data.rates[2];
+    const initalDistrictCharge: DistrictDemandCharge = context.data.rates[0];
+    const initalSummerCharges: SummerWinterCharges = context.data.rates[1];
+    const initalWinterCharges: SummerWinterCharges = context.data.rates[2];
 
+    const rates = context.data.rates;
     const assumptions = context.data.assumptions;
-    const sumEff = Number(assumptions[0]['summer_efficiency'] != undefined ? assumptions[0]['summer_efficiency'] : 0.9) * 100;
-    const winEff = Number(assumptions[0]['winter_efficiency'] != undefined ? assumptions[0]['winter_efficiency'] : 0.8) * 100;
-    const summerOp = Number(assumptions[0]['summer_months_in_op'] != undefined ? assumptions[0]['summer_months_in_op'] : 1);
-    const winterOp = Number(assumptions[0]['winter_months_in_op'] != undefined ? assumptions[0]['winter_months_in_op'] : 8);
-    const milesPerGallon = Number(assumptions[0]['diesel_bus_miles_per_gallon'] != undefined ? assumptions[0]['diesel_bus_miles_per_gallon'] : 6);
-    const dollarsPerGallon = Number(assumptions[0]['diesel_dollar_per_gallon'] != undefined ? assumptions[0]['diesel_dollar_per_gallon'] : 3.72);
-  
+    
+    const [values, setValues] = useState({
+      districtCharge: initalDistrictCharge,
+      summerCharges:  initalSummerCharges,
+      winterCharges:  initalWinterCharges,
+      sumEff: Number(assumptions[0]['summer_efficiency'] != undefined ? assumptions[0]['summer_efficiency'] : 0.9) * 100,
+      winEff: Number(assumptions[0]['winter_efficiency'] != undefined ? assumptions[0]['winter_efficiency'] : 0.8) * 100,
+      summerOp: Number(assumptions[0]['summer_months_in_op'] != undefined ? assumptions[0]['summer_months_in_op'] : 1),
+      winterOp: Number(assumptions[0]['winter_months_in_op'] != undefined ? assumptions[0]['winter_months_in_op'] : 8),
+      milesPerGallon: Number(assumptions[0]['diesel_bus_miles_per_gallon'] != undefined ? assumptions[0]['diesel_bus_miles_per_gallon'] : 6),
+      dollarsPerGallon: Number(assumptions[0]['diesel_dollar_per_gallon'] != undefined ? assumptions[0]['diesel_dollar_per_gallon'] : 3.72)
+    });
+
+    const handleEfficiencyChange = (key: string, value: number) => {
+      setValues((prevState) => ({
+        ...prevState,
+        [key]: value,
+      }));
+    };
+
+    const handleRatesChange = (key: string, value: number) => {
+
+    };
+
+    const handleMonthsChange = (updatedMonthsData: MonthsData) => {
+
+    }
+    
     return (
       
       <section className="content-center">
@@ -33,37 +56,30 @@ export default function Input() {
             <div className="flex-wrap">
               <div className='m-5 p-5'>
               <h1 className="text-2xl font-bold">Efficiencies</h1>
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Summer Efficiency (%)</th>
-                      <th>Winter Efficiency (%)</th>
-                      <th>Summer Months in Operation</th>
-                      <th>Winter Months in Operation</th>
-                      <th>Diesel Bus Miles/Gallon</th>
-                      <th>Diesel $/Gallon</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{sumEff}%</td>
-                      <td>{winEff}%</td>
-                      <td>{summerOp}</td>
-                      <td>{winterOp}</td>
-                      <td>{milesPerGallon}</td>
-                      <td>${dollarsPerGallon}</td>
-                    </tr>
-                  </tbody>
-                </table>
+              <EfficienciesTable
+                sumEff={values.sumEff}
+                winEff={values.winEff}
+                summerOp={values.summerOp}
+                winterOp={values.winterOp}
+                milesPerGallon={values.milesPerGallon}
+                dollarsPerGallon={values.dollarsPerGallon}
+                onValueChange={handleEfficiencyChange}
+              />
               </div>
               
               <div className='m-5 p-5'>
                 <h1 className="text-2xl font-bold">Demand Charges</h1>
-                <DemandChargesTable summerCharges={summerCharges} winterCharges={winterCharges} districtCharge={districtCharge} />
+                <DemandChargesTable 
+                  summerCharges={values.summerCharges}
+                  winterCharges={values.winterCharges}
+                  districtCharge={values.districtCharge} 
+                  onValueChange={handleRatesChange} />
               </div>
               <div className='m-5 p-5'>
                 <h1 className="text-2xl font-bold">Bus Operating Months</h1>
-                <Calendar monthsData={monthsData} />
+                <Calendar 
+                  monthsData={monthsData} 
+                  onMonthsDataChange={handleMonthsChange}/>
               </div>
               
             </div>
