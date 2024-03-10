@@ -34,6 +34,11 @@ const Navbar = () => {
                                 Calculator
                             </li>
                         </Link>
+                        <Link href="/about">
+                            <li className="ml-6 uppercase hover:border-b text-xl text-[#163c66] border-[#163c66] font-bold p-2">
+                                About
+                            </li>
+                        </Link>
                         <Link href="/equipment">
                             <li className="ml-6 uppercase hover:border-b text-xl text-[#163c66] border-[#163c66] font-bold p-2">
                                 Equipment
@@ -72,6 +77,13 @@ const Navbar = () => {
                             onClick={() => setMenuOpen(false)}
                             className="py-4 cursor-pointer text-white">
                                 Calculator
+                            </li>
+                        </Link>
+                        <Link href="/about">
+                            <li 
+                            onClick={() => setMenuOpen(false)}
+                            className="py-4 cursor-pointer text-white">
+                                About
                             </li>
                         </Link>
                         <Link href="/equipment">
