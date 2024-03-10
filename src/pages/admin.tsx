@@ -109,7 +109,7 @@ export default function Admin() {
   const [authed, setAuthed] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [authError, setAuthError] = useState("");
+  const [authError, setAuthError] = useState(""); 
   // Assumptions state
   const [dieselBusMilesPerGallon, setDieselBusMilesPerGallon] = useState(0);
   const [dieselDollarPerGallon, setDieselDollarPerGallon] = useState(0);
