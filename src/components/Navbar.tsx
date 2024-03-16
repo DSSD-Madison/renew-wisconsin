@@ -1,8 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 import {AiOutlineMenu, AiOutlineClose} from 'react-icons/ai';
-import { BiSolidBusSchool } from "react-icons/bi";
-import {IconContext} from "react-icons";
 import {useState} from 'react';
 import Image from 'next/image';
 import renewLogo from 'src/images/RENEWlogotransparent.png';

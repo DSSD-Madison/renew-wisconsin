@@ -1,6 +1,3 @@
-import Bus from "../components/Bus";
-import {useState, useContext} from "react";
-import { DataContext } from "~/contexts/dataContext";
 import BusAccordion from "~/components/BusAccordion";
 import useLocalStorage from "~/hooks/useLocalStorage";
 

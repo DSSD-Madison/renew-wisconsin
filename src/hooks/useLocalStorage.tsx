@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 
 type Bus = {
+  id: number,
   busModel: string;
   batteryCapacity: number;
   summerRange: number;
   winterRange: number;
-  miles:  number;
+  miles:  string;
   kWhOneRouteSummer: number;
   kWhOneRouteWinter: number;
   maxRoutesOneChargeSummer: number;
   maxRoutesOneChargeWinter: number;
   timeOfDay: string;
-  chargerPower: string;
+  chargerPower: number;
   summerChargingTime: number;
   winterChargingTime: number;
   onPeakSummer: number;
@@ -30,17 +31,18 @@ type Buses = {
 
 const initialBusesState: Buses = {
   1: { 
+    id: 1,
     busModel: "N/A", 
     batteryCapacity: 0, 
     summerRange: 0,  
     winterRange: 0, 
-    miles: 0,   
+    miles: "0",   
     kWhOneRouteSummer: 0, 
     kWhOneRouteWinter: 0,
     maxRoutesOneChargeSummer: 0, 
     maxRoutesOneChargeWinter: 0, 
     timeOfDay: "N/A", 
-    chargerPower: "N/A",
+    chargerPower: 0,
     summerChargingTime: 0,
     winterChargingTime: 0,
     onPeakSummer: 0,
@@ -61,111 +63,103 @@ const useLocalStorage = () => {
   });
   const [count, setCount] = useState(1);
 
-  const updateBusesLocal = (id : number, field: string, newValue: any) => {
-    if(id <= count && id >= 1){
-      switch(field) {
-        case "busModel":
-          buses[id].busModel = typeof newValue === 'string' ? newValue : String(newValue);
-          setBuses(buses);
-          break;
-        case "maxCapacity":
-          buses[id].batteryCapacity = typeof newValue === "number" ? newValue : Number(newValue);
-          setBuses(buses);
-          break;
-        case "summerRange":
-          buses[id].summerRange = typeof newValue === "number" ? newValue : Number(newValue);
-          setBuses(buses);
-          break;
-        case "winterRange":
-          buses[id].winterRange = typeof newValue === "number" ? newValue : Number(newValue);
-          setBuses(buses);
-          break;
-        case "miles":
-          buses[id].miles = typeof newValue === 'number' ? newValue : Number(newValue);
-          setBuses(buses);
-          break;
-        case "kWhOneRouteSummer":
-          buses[id].kWhOneRouteSummer = typeof newValue === 'number' ? newValue: Number(newValue);
-          setBuses(buses);
-          break;
-        case "kWhOneRouteWinter":
-          buses[id].kWhOneRouteWinter = typeof newValue === "number" ? newValue: Number(newValue);
-          setBuses(buses);
-          break;
-        case "maxRoutesSummer":
-          buses[id].maxRoutesOneChargeSummer = typeof newValue === "number" ? newValue: Number(newValue);
-          setBuses(buses);
-          break;
-        case "maxRoutesWinter":
-          buses[id].maxRoutesOneChargeWinter = typeof newValue === "number" ? newValue: Number(newValue);
-          setBuses(buses);
-          break;
-        case "timeOfDay":
-          buses[id].timeOfDay = typeof newValue === 'string' ? newValue : String(newValue);
-          setBuses(buses);
-          break;
-        case "chargerPower":
-          buses[id].chargerPower = typeof newValue === "string" ? newValue : String(newValue);
-          setBuses(buses);
-          break;
-        case "summerChargingTime":
-          buses[id].summerChargingTime = typeof newValue === "number" ? newValue: Number(newValue);
-          setBuses(buses);
-          break;
-        case "winterChargingTime":
-          buses[id].winterChargingTime = typeof newValue === "number" ? newValue: Number(newValue);
-          setBuses(buses);
-          break;
-        case "onPeakSummer":
-          buses[id].onPeakSummer = typeof newValue === "number" ? newValue: Number(newValue);
-          setBuses(buses);
-          break;
-        case "onPeakWinter":
-          buses[id].onPeakWinter = typeof newValue === "number" ? newValue: Number(newValue);
-          setBuses(buses);
-          break;
-        case "kWhSummer":
-          buses[id].dollarkWhSummer = typeof newValue === "number" ? newValue: Number(newValue);
-          setBuses(buses);
-          break;
-        case "kwhWinter":
-          buses[id].dollarkWhWinter = typeof newValue === "number" ? newValue: Number(newValue);
-          setBuses(buses);
-          break;
-        case "summerCost":
-          buses[id].totalECSummer = typeof newValue === "number" ? newValue: Number(newValue);
-          setBuses(buses);
-          break;
-        case "winterCost":
-          buses[id].totalECWinter = typeof newValue === "number" ? newValue: Number(newValue);
-          setBuses(buses);
-          break;
-        case "demandCharge":
-          buses[id].demandCharge = typeof newValue === "number" ? newValue: Number(newValue);
-          setBuses(buses);
-          break;
-        case "dieselCostPerDay":
-          buses[id].totalDiesalCost = typeof newValue === "number" ? newValue: Number(newValue);
-          setBuses(buses);
-          break;
-        default:
-          console.log("Couldn't find value");
-          break;
+  const updateBusModelLocal = (id : number, busModel: string, maxCapacity: number, summerRange: number, winterRange: number) => {
+    if(id <= Object.keys(buses).length && id >= 1){
+      buses[id].busModel = busModel;
+      console.log(buses[id].busModel)
+      buses[id].batteryCapacity = maxCapacity;
+      buses[id].summerRange = summerRange;
+      buses[id].winterRange = winterRange;
+      setBuses(buses);
       }
+  }
+
+  const updateRouteMilesLocal = (id : number, miles: string, kWhOneRouteSummer: number, kWhOneRouteWinter: number, maxRouteSummer: number, maxRoutesWinter: number) => {
+    if(id <= Object.keys(buses).length && id >= 1){
+      buses[id].miles = miles;
+      buses[id].kWhOneRouteSummer = kWhOneRouteSummer;
+      buses[id].kWhOneRouteWinter = kWhOneRouteWinter;
+      buses[id].maxRoutesOneChargeSummer = maxRouteSummer;
+      buses[id].maxRoutesOneChargeWinter = maxRoutesWinter;
+      setBuses(buses);
     }
   }
 
-  /*const addBusLocal = () => {
-    var tempCount = count+1;
-    setBuses(prevBuses => ({...prevBuses, [tempCount]: { busModel: "N/A", miles: 0, timeOfDay: "N/A", chargerPower: "N/A" }}))
-    setCount(tempCount);
-  }*/
+  const updateTimeOfDayLocal = (id : number, timeOfDay : string, onPeakSummer : number, onPeakWinter : number, kWhSummer : number, kWhWinter : number) => {
+    if(id <= Object.keys(buses).length && id >= 1){
+      buses[id].timeOfDay = timeOfDay;
+      buses[id].onPeakSummer = onPeakSummer;
+      buses[id].onPeakWinter = onPeakWinter;
+      buses[id].dollarkWhSummer = kWhSummer;
+      buses[id].dollarkWhWinter = kWhWinter;
+      setBuses(buses);
+    }
+  }
+
+  const updateChargerPowerLocal = (id : number, chargerPower : number, summerChargingTime : number, winterChargingTime : number) => {
+    if(id <= Object.keys(buses).length && id >= 1){
+      buses[id].chargerPower = chargerPower;
+      buses[id].summerChargingTime = summerChargingTime;
+      buses[id].winterChargingTime = winterChargingTime;
+      setBuses(buses);
+    }
+  }
+
+  const updateResultsLocal = (id : number, summerCost: number, winterCost: number, demandCharge: number, dieselCostPerDay: number) => {
+    if(id <= Object.keys(buses).length && id >= 1){
+      buses[id].totalECSummer = summerCost;
+      buses[id].totalECWinter = winterCost;
+      buses[id].demandCharge = demandCharge;
+      buses[id].totalDiesalCost = dieselCostPerDay;
+      setBuses(buses);
+    }
+  }
+
+  const addBusLocal = () => {
+    const newBusId = Object.keys(buses).length + 1;
+    const newBus: Bus = {
+      id: newBusId,
+      busModel: "N/A", 
+      batteryCapacity: 0, 
+      summerRange: 0,  
+      winterRange: 0, 
+      miles: "0",   
+      kWhOneRouteSummer: 0, 
+      kWhOneRouteWinter: 0,
+      maxRoutesOneChargeSummer: 0, 
+      maxRoutesOneChargeWinter: 0, 
+      timeOfDay: "N/A", 
+      chargerPower: 0,
+      summerChargingTime: 0,
+      winterChargingTime: 0,
+      onPeakSummer: 0,
+      dollarkWhSummer: 0,
+      onPeakWinter: 0,
+      dollarkWhWinter: 0,
+      totalECSummer: 0,
+      totalECWinter: 0,
+      demandCharge: 0,
+      totalDiesalCost: 0 
+    };
+    buses[newBusId] = newBus;
+    setBuses(buses);
+    setCount(newBusId);
+  }
+
+  const deleteLastBusLocal = () => {
+    const keys = Object.keys(buses);
+    const lastKey = keys[keys.length-1] as unknown as number;
+    if(lastKey>1){
+      delete(buses[lastKey]);
+    }
+    setBuses(buses);
+  }
 
   useEffect(() => {
     localStorage.setItem("buses", JSON.stringify(buses));
   }, [buses]);
 
-  return {buses, updateBusesLocal};
+  return {buses, addBusLocal, updateBusModelLocal, updateRouteMilesLocal, updateTimeOfDayLocal, updateChargerPowerLocal, updateResultsLocal, deleteLastBusLocal};
 
 };
 
