@@ -193,7 +193,6 @@ const Bus = (props: any) => {
     const maxCapWinter = maxCapacity * winterEff;
     if (oneRouteSummer > maxCapSummer && oneRouteWinter > maxCapWinter) {
       if (error) {
-        console.log("Sum and Win");
         error.innerHTML =
           "Route is too long for " +
           busModel +
@@ -286,9 +285,9 @@ const Bus = (props: any) => {
       setWinterChargingTime(0);
       return;
     }
-    //props.kWPerMonth(props.id, powerTemp);
+    props.maxCharger(powerTemp);
     if (timeOfDay == "Daytime") {
-      //props.onPeakDemand(powerTemp - chargerPower, props.id, powerTemp);
+      props.onPeakDemand(powerTemp - chargerPower);
     }
     setChargerPower(powerTemp);
     setSummerChargingTime(
@@ -305,18 +304,14 @@ const Bus = (props: any) => {
     const winterCost = Math.round(kWhWinter * kWhOneRouteWinter * 100) / 100;
     if (summerCost != totalElectrictyCostPerDaySummer) {
       //remove current bus cost from total
-      /*props.summercost(
-        summerCost - totalElectrictyCostPerDaySummer,
-        props.id,
-        summerCost,
-      );*/
+    props.summercost(
+        summerCost - totalElectrictyCostPerDaySummer
+      );
     }
     if (winterCost != totalElectrictyCostPerDayWinter) {
-      /*props.wintercost(
-        winterCost - totalElectrictyCostPerDayWinter,
-        props.id,
-        winterCost,
-      );*/
+      props.wintercost(
+        winterCost - totalElectrictyCostPerDayWinter
+      );
     }
     setTotalElectricityCostPerDaySummer(summerCost);
     setTotalElectricityCostPerDayWinter(winterCost);
@@ -338,7 +333,7 @@ const Bus = (props: any) => {
         100;
     }
     if (d != dieselCostPerDay) {
-      //props.dieselcost(d - dieselCostPerDay, props.id, d);
+      props.dieselcost(d - dieselCostPerDay);
     }
     setDieselCostPerDay(d);
   }

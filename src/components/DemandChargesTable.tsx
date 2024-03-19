@@ -7,17 +7,17 @@ export interface SummerWinterCharges {
     on_peak_kW?: number;
 }
 
-export interface DistrictDemandCharge {
-    district_demand_charge: number;
+export interface DistributionDemandCharge {
+    distribution_demand_charge: number;
 }
 
 interface DemandChargesTableProps {
     summerCharges: SummerWinterCharges;
     winterCharges: SummerWinterCharges;
-    districtCharge: DistrictDemandCharge;
+    distributionCharge: DistributionDemandCharge;
 }
 
-const DemandChargesTable: React.FC<DemandChargesTableProps> = ({ summerCharges, winterCharges, districtCharge }) => {
+const DemandChargesTable: React.FC<DemandChargesTableProps> = ({ summerCharges, winterCharges, distributionCharge: distributionCharge }) => {
 return (
     <div className="table">
     <table>
@@ -44,7 +44,7 @@ return (
             <td>{winterCharges.on_peak_kWh}</td>
             <td>{winterCharges.off_peak_kWh}</td>
             <td>{winterCharges.on_peak_kW}</td>
-            <td>{districtCharge.district_demand_charge}</td>
+            <td>{distributionCharge.distribution_demand_charge}</td>
         </tr>
         </tbody>
     </table>

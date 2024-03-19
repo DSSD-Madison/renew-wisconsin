@@ -57,8 +57,6 @@ const initialBusesState: Buses = {
 
 const useLocalStorage = () => {
   const [buses, setBuses] = useState<Buses>(() => {
-    //const storedBuses = localStorage.getItem('buses');
-    //return storedBuses ? JSON.parse(storedBuses) : initialBusesState;
     return initialBusesState;
   });
   const [count, setCount] = useState(1);
@@ -66,7 +64,6 @@ const useLocalStorage = () => {
   const updateBusModelLocal = (id : number, busModel: string, maxCapacity: number, summerRange: number, winterRange: number) => {
     if(id <= Object.keys(buses).length && id >= 1){
       buses[id].busModel = busModel;
-      console.log(buses[id].busModel)
       buses[id].batteryCapacity = maxCapacity;
       buses[id].summerRange = summerRange;
       buses[id].winterRange = winterRange;
