@@ -1,5 +1,43 @@
 import { useState, useEffect } from "react";
 
+type Summary = {
+  winterDailyCost: number,
+  summerDailyCost: number,
+  winterMonthCost: number,
+  summerMonthCost: number,
+  maxChargerPower: number,
+  onPeakkWPerMonth: number,
+  onPeakDemandChargeWinter: number,
+  onPeakDemandChargeSummer: number,
+  dieselCost: number,
+  dieselMonthCost: number,
+  annualDieselCost: number,
+  distDemandCharge: number,
+  totalCSBSummer: number,
+  totalCSBWinter: number,
+  annualCSBCost: number,
+  annualSavings: number
+}
+
+const initialSummary: Summary = {
+  winterDailyCost: 0,
+  summerDailyCost: 0,
+  winterMonthCost: 0,
+  summerMonthCost: 0,
+  maxChargerPower: 0,
+  onPeakkWPerMonth: 0,
+  onPeakDemandChargeWinter: 0,
+  onPeakDemandChargeSummer: 0,
+  dieselCost: 0,
+  dieselMonthCost: 0,
+  annualDieselCost: 0,
+  distDemandCharge: 0,
+  totalCSBSummer: 0,
+  totalCSBWinter: 0,
+  annualCSBCost: 0,
+  annualSavings: 0
+}
+
 type Bus = {
   id: number,
   busModel: string;
@@ -59,6 +97,9 @@ const useLocalStorage = () => {
   const [buses, setBuses] = useState<Buses>(() => {
     return initialBusesState;
   });
+  const [summary, setSummary] = useState<Summary>(() => {
+    return initialSummary;
+  })
   const [count, setCount] = useState(1);
 
   const updateBusModelLocal = (id : number, busModel: string, maxCapacity: number, summerRange: number, winterRange: number) => {
@@ -112,6 +153,38 @@ const useLocalStorage = () => {
     }
   }
 
+  const updateDailyCost = (winterDaily: number, winterMonthly: number, summerDaily: number, summerMonthly: number) => {
+    summary.winterDailyCost = winterDaily;
+    summary.winterMonthCost = winterMonthly;
+    summary.summerDailyCost = summerDaily;
+    summary.summerMonthCost = summerMonthly;
+    setSummary(summary);
+  }
+
+  const updateOnPeakkWH = (onPeakkWhPerMonth: number, onPeakDemandChargeWinter: number, onPeakDemandChargeSummer: number, maxCharger: number, distDemandCharge: number) => {
+    summary.onPeakkWPerMonth = onPeakkWhPerMonth;
+    summary.onPeakDemandChargeSummer = onPeakDemandChargeSummer;
+    summary.onPeakDemandChargeWinter = onPeakDemandChargeWinter;
+    summary.maxChargerPower = maxCharger;
+    summary.distDemandCharge = distDemandCharge;
+    setSummary(summary);
+  }
+
+  const updateDieselCost = (dieselCost: number, dieselMonthCost: number, dieselAnnualCost: number) => {
+    summary.dieselCost = dieselCost;
+    summary.dieselMonthCost = dieselMonthCost;
+    summary.annualDieselCost = dieselAnnualCost;
+    setSummary(summary);
+  }
+
+  const updateTotalCosts = (totalCSBSummerMonth: number, totalCSBWinterMonth: number, annualCSBCost: number, annualSavings: number) => {
+    summary.totalCSBSummer = totalCSBSummerMonth;
+    summary.totalCSBWinter = totalCSBWinterMonth;
+    summary.annualCSBCost = annualCSBCost;
+    summary.annualSavings = annualSavings;
+    setSummary(summary);
+  }
+
   const addBusLocal = () => {
     const newBusId = Object.keys(buses).length + 1;
     const newBus: Bus = {
@@ -156,7 +229,11 @@ const useLocalStorage = () => {
     localStorage.setItem("buses", JSON.stringify(buses));
   }, [buses]);
 
-  return {buses, addBusLocal, updateBusModelLocal, updateRouteMilesLocal, updateTimeOfDayLocal, updateChargerPowerLocal, updateResultsLocal, deleteLastBusLocal};
+  useEffect(() => {
+    localStorage.setItem("summary", JSON.stringify(summary));
+  }, [summary])
+
+  return {buses, summary, addBusLocal, updateBusModelLocal, updateRouteMilesLocal, updateTimeOfDayLocal, updateChargerPowerLocal, updateResultsLocal, deleteLastBusLocal, updateDailyCost, updateOnPeakkWH, updateDieselCost, updateTotalCosts};
 
 };
 

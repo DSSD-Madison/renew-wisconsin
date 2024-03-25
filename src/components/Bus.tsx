@@ -304,9 +304,9 @@ const Bus = (props: any) => {
     const winterCost = Math.round(kWhWinter * kWhOneRouteWinter * 100) / 100;
     if (summerCost != totalElectrictyCostPerDaySummer) {
       //remove current bus cost from total
-    props.summercost(
-        summerCost - totalElectrictyCostPerDaySummer
-      );
+      props.summercost(
+          summerCost - totalElectrictyCostPerDaySummer
+        );
     }
     if (winterCost != totalElectrictyCostPerDayWinter) {
       props.wintercost(
@@ -317,7 +317,7 @@ const Bus = (props: any) => {
     setTotalElectricityCostPerDayWinter(winterCost);
     //Can possibly simplify because onePeakSummer and onPeakWinter might be 0
     if (timeOfDay == "Daytime") {
-      if (chargerPower > 39) {
+      if (chargerPower > 29) {
         const aveOnPeak = (onPeakSummer + onPeakWinter) / 2;
         setDemandCharge(Math.round(chargerPower * aveOnPeak * 100) / 100);
       } else {

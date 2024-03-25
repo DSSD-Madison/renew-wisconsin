@@ -8,31 +8,53 @@ import useLocalStorage from '~/hooks/useLocalStorage';
 const BusAccordion = (props: any) => {
 
     const context = useContext(DataContext);
-    const {buses, addBusLocal, deleteLastBusLocal} = useLocalStorage();
+    const {buses, summary, addBusLocal, deleteLastBusLocal, updateDailyCost, updateOnPeakkWH, updateDieselCost, updateTotalCosts} = useLocalStorage();
     const [busCount, setBusCount] = useState(Object.keys(buses).length);
-    const [winterDailyCost, setWinterDailyCost] = useState(0);
-    const [summerDailyCost, setSummerDailyCost] = useState(0);
-    const [winterMonthCost, setWinterMonthCost] = useState(0);
-    const [summerMonthCost, setSummerMonthCost] = useState(0);
-    const [maxChargerPower, setMaxChargerPower] = useState(0);
-    const [onPeakkWPerMonth, setOnPeakkWPerMonth] = useState(0);
-    const [onPeakDemandChargeWinter, setOnPeakDemandChargeWinter] = useState(0);
-    const [onPeakDemandChargeSummer, setOnPeakDemandChargeSummer] = useState(0);
-    const [dieselCost, setDieselCostPerDay] = useState(0);
-    const [dieselMonthCost, setDieselCostPerMonth] = useState(0);
-    const [annualDieselCost, setAnnualDieselCost] = useState(0);
-    const [distDemandCharge, setDistDemandCharge] = useState(0);
-    const [totalCSBSummer, setTotalCSBSummer] = useState(0);
-    const [totalCSBWinter, setTotalCSBWinter] = useState(0);
-    const [annualCSBCost, setAnnualCSBCost] = useState(0);
+    const [winterDailyCost, setWinterDailyCost] = useState(summary.winterDailyCost);
+    const [summerDailyCost, setSummerDailyCost] = useState(summary.summerDailyCost);
+    const [winterMonthCost, setWinterMonthCost] = useState(summary.winterMonthCost);
+    const [summerMonthCost, setSummerMonthCost] = useState(summary.summerMonthCost);
+    const [maxChargerPower, setMaxChargerPower] = useState(summary.maxChargerPower);
+    const [onPeakkWPerMonth, setOnPeakkWPerMonth] = useState(summary.onPeakkWPerMonth);
+    const [onPeakDemandChargeWinter, setOnPeakDemandChargeWinter] = useState(summary.onPeakDemandChargeWinter);
+    const [onPeakDemandChargeSummer, setOnPeakDemandChargeSummer] = useState(summary.onPeakDemandChargeSummer);
+    const [dieselCost, setDieselCostPerDay] = useState(summary.dieselCost);
+    const [dieselMonthCost, setDieselCostPerMonth] = useState(summary.dieselMonthCost);
+    const [annualDieselCost, setAnnualDieselCost] = useState(summary.annualDieselCost);
+    const [distDemandCharge, setDistDemandCharge] = useState(summary.distDemandCharge);
+    const [totalCSBSummer, setTotalCSBSummer] = useState(summary.summerMonthCost);
+    const [totalCSBWinter, setTotalCSBWinter] = useState(summary.winterMonthCost);
+    const [annualCSBCost, setAnnualCSBCost] = useState(summary.annualCSBCost);
+    const [annualSavings, setAnnualSavings] = useState(summary.annualDieselCost);
+    const [valsInitialized, setValsInitialized] = useState(false);
 
-    /*useEffect(() => {
+    useEffect(() => {
         calculateDistDemandCharge();
-    },[maxChargerPower])
+    },[maxChargerPower]);
 
     useEffect(() => {
         calculateCSBCostPerMonth();
-    },[maxChargerPower, winterMonthCost, summerMonthCost, distDemandCharge])*/
+    },[maxChargerPower, winterMonthCost, summerMonthCost, distDemandCharge]);
+
+    useEffect(() => {
+        calculateSavings();
+    }, [dieselMonthCost, totalCSBWinter, totalCSBSummer, distDemandCharge]);
+    
+    useEffect(() => {
+        updateDailyCost(winterDailyCost, winterMonthCost, summerDailyCost, summerMonthCost);
+    }, [winterDailyCost, winterMonthCost, summerDailyCost, summerMonthCost])
+
+    useEffect(() => {
+        updateOnPeakkWH(onPeakkWPerMonth, onPeakDemandChargeWinter, onPeakDemandChargeSummer, maxChargerPower, distDemandCharge);
+    }, [onPeakkWPerMonth, onPeakDemandChargeWinter, onPeakDemandChargeWinter, maxChargerPower, distDemandCharge])
+
+    useEffect(() => {
+        updateDieselCost(dieselCost, dieselMonthCost, annualDieselCost);
+    }, [dieselCost, dieselMonthCost, annualDieselCost])
+
+    useEffect(() => {
+        updateTotalCosts(totalCSBSummer, totalCSBWinter, annualCSBCost, annualSavings);
+    }, [totalCSBSummer, totalCSBWinter, annualCSBCost, annualSavings])
 
     if (context.loading) {
         return <></>;
@@ -55,6 +77,37 @@ const BusAccordion = (props: any) => {
         ];
         return monthOrder.indexOf(a) - monthOrder.indexOf(b);
     });
+    const dollarkWhPerDay = [monthsInOperation["January"] ? winterDailyCost : 0, monthsInOperation["February"] ? winterDailyCost : 0, monthsInOperation["March"] ? winterDailyCost : 0, monthsInOperation["April"] ? winterDailyCost : 0,
+monthsInOperation["May"] ? winterDailyCost : 0, monthsInOperation["June"] ? summerDailyCost : 0, monthsInOperation["July"] ? summerDailyCost : 0, monthsInOperation["August"] ? summerDailyCost : 0, monthsInOperation["September"] ? summerDailyCost : 0,
+monthsInOperation["October"] ? winterDailyCost : 0, monthsInOperation["November"] ? winterDailyCost : 0, monthsInOperation["December"] ? winterDailyCost : 0];
+    const kWhPerDayCost = dollarkWhPerDay.map((cost, index)=>
+    <td key={index} className="text-sm">${cost}</td>)
+    const onPeakDemandCharges = [monthsInOperation["January"] ? onPeakDemandChargeWinter : 0, monthsInOperation["February"] ? onPeakDemandChargeWinter : 0, monthsInOperation["March"] ? onPeakDemandChargeWinter : 0, monthsInOperation["April"] ? onPeakDemandChargeWinter : 0,
+monthsInOperation["May"] ? onPeakDemandChargeWinter : 0, monthsInOperation["June"] ? onPeakDemandChargeSummer : 0, monthsInOperation["July"] ? onPeakDemandChargeSummer : 0, monthsInOperation["August"] ? onPeakDemandChargeSummer : 0, monthsInOperation["September"] ? onPeakDemandChargeSummer : 0,
+monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["November"] ? onPeakDemandChargeWinter : 0, monthsInOperation["December"] ? onPeakDemandChargeWinter : 0];
+    const onPeakDemand = onPeakDemandCharges.map((charge, index)=>
+    <td key={index} className="text-sm">${charge}</td>)
+    const distributionDemandCharges = [distDemandCharge,distDemandCharge,distDemandCharge,distDemandCharge,distDemandCharge,distDemandCharge,distDemandCharge,distDemandCharge,distDemandCharge,distDemandCharge,distDemandCharge,distDemandCharge];
+    const distributionDemandCharge = distributionDemandCharges.map((charge, index)=>
+    <td key={index} className="text-sm">${charge}</td>)
+    const totalCSBPerMonths = [monthsInOperation["January"] ? totalCSBWinter : distDemandCharge, monthsInOperation["February"] ? totalCSBWinter : distDemandCharge, monthsInOperation["March"] ? totalCSBWinter : distDemandCharge, monthsInOperation["April"] ? totalCSBWinter : distDemandCharge,
+    monthsInOperation["May"] ? totalCSBWinter : distDemandCharge, monthsInOperation["June"] ? totalCSBSummer : distDemandCharge, monthsInOperation["July"] ? totalCSBSummer : distDemandCharge, monthsInOperation["August"] ? totalCSBSummer : distDemandCharge, monthsInOperation["September"] ? totalCSBSummer : distDemandCharge,
+    monthsInOperation["October"] ? totalCSBWinter : distDemandCharge, monthsInOperation["November"] ? totalCSBWinter : distDemandCharge, monthsInOperation["December"] ? totalCSBWinter : distDemandCharge];
+    const csbCostPerMonth = totalCSBPerMonths.map((csbCost, index)=>
+    <td key={index} className="text-sm">${csbCost}</td>)
+    const totalDieselCostPerMonths = [monthsInOperation["January"] ? dieselMonthCost : 0, monthsInOperation["February"] ? dieselMonthCost : 0, monthsInOperation["March"] ? dieselMonthCost : 0, monthsInOperation["April"] ? dieselMonthCost : 0,
+    monthsInOperation["May"] ? dieselMonthCost : 0, monthsInOperation["June"] ? dieselMonthCost : 0, monthsInOperation["July"] ? dieselMonthCost : 0, monthsInOperation["August"] ? dieselMonthCost : 0, monthsInOperation["September"] ? dieselMonthCost : 0,
+    monthsInOperation["October"] ? dieselMonthCost : 0, monthsInOperation["November"] ? dieselMonthCost : 0, monthsInOperation["December"] ? dieselMonthCost : 0];
+    const dieselCostPerMonth = totalDieselCostPerMonths.map((cost, index)=>
+    <td key={index} className="text-sm">${cost}</td>)
+    const totalWinterSavings = Math.round((dieselMonthCost-totalCSBWinter)*100)/100;
+    const totalSummerSavings = Math.round((dieselMonthCost-totalCSBSummer)*100)/100;
+    const totalNonOpSavings = Math.round((0-distDemandCharge)*100)/100;
+    const totalMonthlySavings = [monthsInOperation["January"] ? totalWinterSavings : totalNonOpSavings, monthsInOperation["February"] ? totalWinterSavings : totalNonOpSavings, monthsInOperation["March"] ? totalWinterSavings : totalNonOpSavings, monthsInOperation["April"] ? totalWinterSavings : totalNonOpSavings,
+    monthsInOperation["May"] ? totalWinterSavings : totalNonOpSavings, monthsInOperation["June"] ? totalSummerSavings : totalNonOpSavings, monthsInOperation["July"] ? totalSummerSavings : totalNonOpSavings, monthsInOperation["August"] ? totalSummerSavings : totalNonOpSavings, monthsInOperation["September"] ? totalSummerSavings : totalNonOpSavings,
+    monthsInOperation["October"] ? totalWinterSavings : totalNonOpSavings, monthsInOperation["November"] ? totalWinterSavings : totalNonOpSavings, monthsInOperation["December"] ? totalWinterSavings : totalNonOpSavings];
+    const monthlySavings = totalMonthlySavings.map((save, index)=>
+    <td key={index} className="text-sm">${save}</td>)
 
     //Values from the Bus components used for cost summary
     
@@ -63,6 +116,7 @@ const BusAccordion = (props: any) => {
         setWinterDailyCost(w);
         //22 weekdays in a month
         setWinterMonthCost(Math.round((w*22)*100)/100);
+        setValsInitialized(true);
     }
 
     const addToSummerDailyCost = (data: number) => {
@@ -70,6 +124,7 @@ const BusAccordion = (props: any) => {
         setSummerDailyCost(s);
         //22 weekdays in a month
         setSummerMonthCost(Math.round((s*22)*100)/100);
+        setValsInitialized(true);
     }
 
     //Only called when charging time of day is in the daytime
@@ -90,7 +145,7 @@ const BusAccordion = (props: any) => {
         }
     }
 
-    const addToDieselDailyCost = (data: number, id: number, newVal: number) => {
+    const addToDieselDailyCost = (data: number) => {
         const d = Math.round((dieselCost+data)*100)/100;
         setDieselCostPerDay(d);
         const dieselCostPerMonth = Math.round((d*22)*100)/100;
@@ -106,25 +161,49 @@ const BusAccordion = (props: any) => {
         }
     }
 
-    const calculateDistDemandCharge = () => {
+    const findNewMaxCharger = () => {
+        let max = 0;
+        for(let i = 1; i < Object.keys(buses).length+1; i++){
+            if(max < buses[i].chargerPower){
+                max = buses[i].chargerPower;
+            }
+        }
+        console.log(max);
+        setMaxChargerPower(max);
+    }
+
+    function calculateDistDemandCharge(){
         if(maxChargerPower > 25){
             const demandCharge = Math.round(distributionCharge*maxChargerPower*100)/100;
             setDistDemandCharge(demandCharge);
+            console.log(maxChargerPower);
+            console.log(demandCharge);
         }
         else{
             setDistDemandCharge(0);
+            console.log(0);
         }
     }
 
-    const calculateCSBCostPerMonth = () => {
+    function calculateCSBCostPerMonth() {
         const totalCSBWinter = Math.round((onPeakDemandChargeWinter+distDemandCharge+winterMonthCost)*100)/100;
         const totalCSBSummer = Math.round((onPeakDemandChargeSummer+distDemandCharge+summerMonthCost)*100)/100;
         setTotalCSBSummer(totalCSBSummer);
         setTotalCSBWinter(totalCSBWinter);
-        const sumAnnualCSBCost = Math.round(((totalCSBWinter*winterMonthsActiveCount)+(totalCSBSummer*summerMonthsActiveCount)+(distributionCharge*nonActiveMonthsCount))*100)/100;
-        setAnnualCSBCost(sumAnnualCSBCost);
+        if(valsInitialized){
+            const sumAnnualCSBCost = Math.round(((totalCSBWinter*winterMonthsActiveCount)+(totalCSBSummer*summerMonthsActiveCount)+(distDemandCharge*nonActiveMonthsCount))*100)/100;
+            setAnnualCSBCost(sumAnnualCSBCost);
+        }
     }
 
+    function calculateSavings() {
+        const savingsWinter = Math.round((dieselMonthCost-totalCSBWinter)*100)/100;
+        const savingsSummer = Math.round((dieselMonthCost-totalCSBSummer)*100)/100;
+        const nonOperating = Math.round((0-distDemandCharge)*100)/100;
+        if(valsInitialized){
+            setAnnualSavings(Math.round(((savingsWinter*winterMonthsActiveCount)+(savingsSummer*summerMonthsActiveCount)+(nonOperating*nonActiveMonthsCount))*100)/100)
+        }
+    }
 
     //Dealing with Bus Accordion
     const addBus = () => {
@@ -134,6 +213,14 @@ const BusAccordion = (props: any) => {
 
     const deleteBus = () => {
         if(busCount > 1){
+            const busId = Object.keys(buses).length
+            let removeWinter = Math.round(buses[busId].kWhOneRouteWinter*buses[busId].dollarkWhWinter*100)/100;
+            let removeSummer = Math.round(buses[busId].kWhOneRouteSummer*buses[busId].dollarkWhSummer*100)/100;
+            let removeDiesel = Math.round(buses[busId].totalDiesalCost);
+            addToWinterDailyCost(-1*removeWinter);
+            addToSummerDailyCost(-1*removeSummer);
+            addToDieselDailyCost(-1*removeDiesel);
+            findNewMaxCharger();
             deleteLastBusLocal();
             setBusCount(busCount-1);
         }
@@ -157,19 +244,69 @@ const BusAccordion = (props: any) => {
                 </button>
             </div>
             <div className="m-7">
-                <h1 className="text-2xl font-bold">Monthly Cost</h1>
+                <h1 className="text-2xl font-bold">Monthly Costs</h1>
                 <div className="overflow-x-auto">
                     <table className="table table-xs table-pin-rows table-pin-cols">
                         <thead>
                             <tr>
+                                <th></th>
                                 {sortedMonths.map((month, index) => (
                                     <td key={index} className={monthsData[month] ? 'text-[#3b9044] text-base' : 'text-red-700 text-base'}>{month}</td>
                                 ))}
                             </tr>
                         </thead>
-
+                        <tbody>
+                            <tr>
+                                <th className="text-sm font-normal tooltip tooltip-right cursor-help" 
+                                    data-tip="The daily cost to charge all operational buses for the corresponding month.">
+                                    $/kWh per Day
+                                </th>
+                                {kWhPerDayCost}
+                            </tr>
+                            <tr>
+                                <th className="text-sm font-normal tooltip tooltip-right cursor-help" 
+                                    data-tip="This demand charge is applied based on the maximum number of kilowatts used at once by the selected chargers during On-Peak hours.">
+                                    On-Peak Demand Charge per Month
+                                </th> 
+                                {onPeakDemand}
+                            </tr>
+                            <tr>
+                                <th className="text-sm font-normal tooltip tooltip-right cursor-help"
+                                    data-tip="This charge is based on the maximum number of kilowatts used at once over the whole year. This charge will be the same for every month and is dependent on the time of the highest power use.">
+                                    Distribution Demand Charge per Month
+                                </th>
+                                {distributionDemandCharge}
+                            </tr>
+                            <tr>
+                                <th className="text-sm font-normal tooltip tooltip-right cursor-help"
+                                    data-tip="The total electricity cost for all operational buses per month.">
+                                    Total CSB Cost per Month
+                                </th> 
+                                {csbCostPerMonth}
+                            </tr>
+                            <tr>
+                                <th className="text-sm font-normal tooltip tooltip-right cursor-help" 
+                                    data-tip="The mirrored total cost to fuel the same number of operational diesel buses per month.">
+                                    Total Diesel Cost per Month
+                                </th> 
+                                {dieselCostPerMonth}
+                            </tr>
+                            <tr>
+                                <th className="text-sm font-normal tooltip tooltip-right cursor-help"
+                                    data-tip="The amount of money saved per month by utilizing electric school buses rather than diesel buses.">
+                                    Total Monthly Savings
+                                </th> 
+                                {monthlySavings}
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
+            </div>
+            <div className="m-7">
+                <h1 className="text-2xl font-bold">Annual Costs</h1>
+                <h1>Annual CSB Cost: ${annualCSBCost}</h1>
+                <h1>Annual Diesel Cost: ${annualDieselCost}</h1>
+                <h1>Annual Savings: ${annualSavings}</h1>
             </div>
         </div>
     );
