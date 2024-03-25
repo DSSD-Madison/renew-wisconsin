@@ -4,7 +4,7 @@ import {useState, useContext} from "react";
 import Calendar from "~/components/Calendar";
 import {MonthsData} from "~/components/Calendar";
 import DemandChargesTable from "~/components/DemandChargesTable";
-import {SummerWinterCharges, DistrictDemandCharge} from "~/components/DemandChargesTable";
+import {SummerWinterCharges, DistributionDemandCharge} from "~/components/DemandChargesTable";
 
 export default function Input() {
     const context = useContext(DataContext);
@@ -13,7 +13,7 @@ export default function Input() {
     }
     const monthsData: MonthsData = context.data.operation_schedule[0];
 
-    const districtCharge: DistrictDemandCharge = context.data.rates[0];
+    const distributionCharge: DistributionDemandCharge = context.data.rates[0];
     const summerCharges: SummerWinterCharges = context.data.rates[1];
     const winterCharges: SummerWinterCharges = context.data.rates[2];
 
@@ -59,7 +59,7 @@ export default function Input() {
               
               <div className='m-5 p-5'>
                 <h1 className="text-2xl font-bold">Demand Charges</h1>
-                <DemandChargesTable summerCharges={summerCharges} winterCharges={winterCharges} districtCharge={districtCharge} />
+                <DemandChargesTable summerCharges={summerCharges} winterCharges={winterCharges} distributionCharge={distributionCharge} />
               </div>
               <div className='m-5 p-5'>
                 <h1 className="text-2xl font-bold">Bus Operating Months</h1>
