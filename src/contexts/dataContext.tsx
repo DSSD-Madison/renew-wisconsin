@@ -47,7 +47,7 @@ const DataContextProvider = ({ children }: { children: ReactNode }) => {
     fetchData();
   }, []);
 
-  const value = { loading, authed, setAuthed, data };
+  const value = { loading, authed, setAuthed, data, setData };
 
   return (
     <DataContext.Provider value={value}>{children}</DataContext.Provider>
