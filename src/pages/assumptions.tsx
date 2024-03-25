@@ -1,6 +1,6 @@
 import React from 'react';
 import { DataContext } from "~/contexts/dataContext";
-import {useState, useContext} from "react";
+import {useState, useContext, useEffect} from "react";
 import Calendar from "~/components/Calendar";
 import {MonthsData} from "~/components/Calendar";
 import DemandChargesTable from "~/components/DemandChargesTable";
@@ -22,6 +22,29 @@ export default function Input() {
     const winterCharges: SummerWinterCharges = rates[2];
 
     const assumptions = context.data.assumptions;
+
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
+    useEffect(() => {
+        const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        setIsDarkMode(darkModeMediaQuery.matches);
+
+        const darkModeChangeListener = (event:any) => {
+            setIsDarkMode(event.matches);
+        };
+
+        darkModeMediaQuery.addEventListener('change', darkModeChangeListener);
+
+        return () => {
+            darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
+        };
+    }, []);
+
+    const titleStyle = {
+      fontSize: '2em',
+      marginBottom: '10px',
+    };
+
     //console.log("Assumptions: ", assumptions);
         
     const sumEff = Number(assumptions[0]['summer_efficiency'] != undefined ? assumptions[0]['summer_efficiency'] : 0.9) * 100
@@ -65,7 +88,6 @@ export default function Input() {
     }
     
     return (
-      
       <section className="w-screen h-full content-center">
           <div className="flex justify-center items-center h-full w-full">
           <div className="justify-center h-5/6 w-9/12 mt-14">
@@ -74,7 +96,7 @@ export default function Input() {
               <span>Click on the values to edit the numbers the calculator uses in its calculations.</span></div>
             <div className="flex-wrap">
               <div className='m-5 p-5'>
-              <h1 className="text-2xl font-bold">Efficiencies</h1>
+              <h1 style={{ ...titleStyle, color: isDarkMode ? 'white' : '#333' }} className="text-2xl">Efficiencies</h1>
               <EfficienciesTable
                 summer_efficiency={sumEff}
                 winter_efficiency={winEff}
@@ -97,7 +119,6 @@ export default function Input() {
                 <Calendar 
                   monthsData={monthsData} 
                   onMonthsDataChange={handleMonthsChange}/>
-              </div>
               </div>
             </div>
 

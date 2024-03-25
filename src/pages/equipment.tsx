@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {DataContext} from "~/contexts/dataContext";
 import LoadingSpinner from "~/components/equipment/loading_bar";
 import {BusData, BusTable} from "~/components/equipment/busTable";
@@ -10,6 +10,22 @@ export default function Equipment() {
         return <h1><LoadingSpinner /></h1>
     }
 
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
+    useEffect(() => {
+        const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        setIsDarkMode(darkModeMediaQuery.matches);
+
+        const darkModeChangeListener = (event:any) => {
+            setIsDarkMode(event.matches);
+        };
+
+        darkModeMediaQuery.addEventListener('change', darkModeChangeListener);
+
+        return () => {
+            darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
+        };
+    }, []);
     const extractNumericValue = (obj: any, propertyName: string): number | undefined => {
         const value = obj[propertyName];
         if (typeof value === 'number') {
@@ -45,12 +61,18 @@ export default function Equipment() {
     const typedWinterChargingData: ChargingData[] = createTypedAndSortedChargingData(context.data.winter_charging);
     const typedSummerChargingData: ChargingData[] = createTypedAndSortedChargingData(context.data.summer_charging);
 
+    const titleStyle = {
+        fontSize: '2em',
+        marginBottom: '10px',
+    };
+
+
     return (
         <section className="content-center">
             <br/>
             <br/>
             <br/>
-            <h1 className="text-4xl font-bold text-center">Bus Information</h1>
+            <h1 style={{ ...titleStyle, color: isDarkMode ? 'white' : '#333' }} className="text-center">Bus Information</h1>
             <div className="p-5">
                 <BusTable data={typedBusDataArray} />
             </div>
@@ -58,7 +80,7 @@ export default function Equipment() {
             <br/>
             <br/>
             <div className="p-5">
-            <h1 className="text-4xl font-bold text-center">Charger Statistics</h1>
+            <h1 style={{ ...titleStyle, color: isDarkMode ? 'white' : '#333' }} className="text-center">Charger Statistics</h1>
             <ChargingDataTable data1={typedWinterChargingData} data2={typedSummerChargingData}/>
             </div>
         </section>
