@@ -438,7 +438,7 @@ export default function Admin() {
             <Field>
               {(id) => (
                 <>
-                  <Label htmlFor={id}>Charging Type</Label>
+                  {/*<Label htmlFor={id}>Charging Type</Label>
                   {/* <Input
                     id={id}
                     value={newBus.chargingType}
