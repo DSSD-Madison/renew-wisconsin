@@ -6,38 +6,38 @@ export interface SummerWinterCharges {
   on_peak_kW?: number;
 }
 
-export interface DistrictDemandCharge {
-  district_demand_charge: number;
+export interface DistributionDemandCharge {
+  distribution_demand_charge: number;
 }
 
 interface DemandChargesTableProps {
   summerCharges: SummerWinterCharges;
   winterCharges: SummerWinterCharges;
-  districtCharge: DistrictDemandCharge;
+  distributionCharge: DistributionDemandCharge;
   onValueChange: (key: string, value: number) => void;
 }
 
 const DemandChargesTable: React.FC<DemandChargesTableProps> = ({
   summerCharges,
   winterCharges,
-  districtCharge,
+  distributionCharge: distributionCharge,
   onValueChange,
 }) => {
   const [editedValues, setEditedValues] = useState({
     summerCharges,
     winterCharges,
-    districtCharge: districtCharge.district_demand_charge,
+    distributionCharge: distributionCharge.distribution_demand_charge,
   });
 
   const handleCellChange = (key: string, value: number) => {
     const clampedValue = isNaN(value) ? 0 : value;
 
-    if (key === 'districtCharge') {
+    if (key === 'distributionCharge') {
       setEditedValues((prevState) => ({
         ...prevState,
-        districtCharge: clampedValue,
+        distributionCharge: clampedValue,
       }));
-      onValueChange('districtCharge', clampedValue);
+      onValueChange('distributionCharge', clampedValue);
     } else {
       const [season, field] = key.split(/_(.*)/s);
       const updatedValues = { ...editedValues };
@@ -130,8 +130,8 @@ const DemandChargesTable: React.FC<DemandChargesTableProps> = ({
             <td>
               <input
                 type="number"
-                value={editedValues.districtCharge}
-                onChange={(e) => handleCellChange('districtCharge', Number(e.target.value))}
+                value={editedValues.distributionCharge}
+                onChange={(e) => handleCellChange('distributionCharge', Number(e.target.value))}
                 className="input w-full max-w-xs"
               />
             </td>

@@ -4,7 +4,7 @@ import {useState, useContext} from "react";
 import Calendar from "~/components/Calendar";
 import {MonthsData} from "~/components/Calendar";
 import DemandChargesTable from "~/components/DemandChargesTable";
-import {SummerWinterCharges, DistrictDemandCharge} from "~/components/DemandChargesTable";
+import {SummerWinterCharges, DistributionDemandCharge} from "~/components/DemandChargesTable";
 import EfficienciesTable from '~/components/EfficienciesTable';
 
 export default function Input() {
@@ -13,11 +13,10 @@ export default function Input() {
       return <h1></h1>
     }
     const setData = context.setData;
-    console.log(context.data)
     const monthsData: MonthsData = context.data.operation_schedule[0];
 
     const rates = context.data.rates;
-    const districtCharge: DistrictDemandCharge = rates[0];
+    const districtCharge: DistributionDemandCharge = rates[0];
     const summerCharges: SummerWinterCharges = rates[1];
     const winterCharges: SummerWinterCharges = rates[2];
 
@@ -66,9 +65,9 @@ export default function Input() {
     
     return (
       
-      <section className="content-center">
+      <section className="w-screen h-full content-center">
           <div className="flex justify-center items-center h-full w-full">
-  
+          <div className="justify-center h-5/6 w-9/12 mt-14">
             <div className="flex-wrap">
               <div className='m-5 p-5'>
               <h1 className="text-2xl font-bold">Efficiencies</h1>
@@ -88,7 +87,7 @@ export default function Input() {
                 <DemandChargesTable 
                   summerCharges={summerCharges}
                   winterCharges={winterCharges}
-                  districtCharge={districtCharge} 
+                  distributionCharge={districtCharge} 
                   onValueChange={handleRatesChange} />
               </div>
               <div className='m-5 p-5'>
@@ -97,7 +96,7 @@ export default function Input() {
                   monthsData={monthsData} 
                   onMonthsDataChange={handleMonthsChange}/>
               </div>
-              
+              </div>
             </div>
 
             
