@@ -26,7 +26,7 @@ export function Input({ ...props }: JSX.IntrinsicElements["input"]) {
     <input
       {...props}
       className={clsx(
-        "mt-1 w-full rounded-md border-0 px-3 py-2 text-sm shadow-sm outline-none ring-1 ring-inset ring-neutral-300 placeholder:text-neutral-400 focus:ring-2 focus:ring-amber-300",
+        "mt-1 w-full rounded-md border-0 px-3 py-2 text-sm shadow-sm outline-none ring-1 ring-inset ring-neutral-300 placeholder:text-neutral-400c1c  ",
         props.className,
       )}
     />
