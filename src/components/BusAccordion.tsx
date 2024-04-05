@@ -25,7 +25,6 @@ const BusAccordion = (props: any) => {
     const [totalCSBSummer, setTotalCSBSummer] = useState(summary.summerMonthCost);
     const [totalCSBWinter, setTotalCSBWinter] = useState(summary.winterMonthCost);
     const [annualCSBCost, setAnnualCSBCost] = useState(summary.annualCSBCost);
-    const [annualSavings, setAnnualSavings] = useState(summary.annualDieselCost);
     const [valsInitialized, setValsInitialized] = useState(false);
 
     useEffect(() => {
@@ -35,10 +34,6 @@ const BusAccordion = (props: any) => {
     useEffect(() => {
         calculateCSBCostPerMonth();
     },[maxChargerPower, winterMonthCost, summerMonthCost, distDemandCharge]);
-
-    useEffect(() => {
-        calculateSavings();
-    }, [dieselMonthCost, totalCSBWinter, totalCSBSummer, distDemandCharge]);
     
     useEffect(() => {
         updateDailyCost(winterDailyCost, winterMonthCost, summerDailyCost, summerMonthCost);
@@ -53,8 +48,8 @@ const BusAccordion = (props: any) => {
     }, [dieselCost, dieselMonthCost, annualDieselCost])
 
     useEffect(() => {
-        updateTotalCosts(totalCSBSummer, totalCSBWinter, annualCSBCost, annualSavings);
-    }, [totalCSBSummer, totalCSBWinter, annualCSBCost, annualSavings])
+        updateTotalCosts(totalCSBSummer, totalCSBWinter, annualCSBCost, Math.round((annualDieselCost-annualCSBCost)*100)/100);
+    }, [totalCSBSummer, totalCSBWinter, annualCSBCost])
 
     if (context.loading) {
         return <></>;
@@ -168,7 +163,6 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
                 max = buses[i].chargerPower;
             }
         }
-        console.log(max);
         setMaxChargerPower(max);
     }
 
@@ -176,12 +170,9 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
         if(maxChargerPower > 25){
             const demandCharge = Math.round(distributionCharge*maxChargerPower*100)/100;
             setDistDemandCharge(demandCharge);
-            console.log(maxChargerPower);
-            console.log(demandCharge);
         }
         else{
             setDistDemandCharge(0);
-            console.log(0);
         }
     }
 
@@ -193,15 +184,6 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
         if(valsInitialized){
             const sumAnnualCSBCost = Math.round(((totalCSBWinter*winterMonthsActiveCount)+(totalCSBSummer*summerMonthsActiveCount)+(distDemandCharge*nonActiveMonthsCount))*100)/100;
             setAnnualCSBCost(sumAnnualCSBCost);
-        }
-    }
-
-    function calculateSavings() {
-        const savingsWinter = Math.round((dieselMonthCost-totalCSBWinter)*100)/100;
-        const savingsSummer = Math.round((dieselMonthCost-totalCSBSummer)*100)/100;
-        const nonOperating = Math.round((0-distDemandCharge)*100)/100;
-        if(valsInitialized){
-            setAnnualSavings(Math.round(((savingsWinter*winterMonthsActiveCount)+(savingsSummer*summerMonthsActiveCount)+(nonOperating*nonActiveMonthsCount))*100)/100)
         }
     }
 
@@ -306,7 +288,7 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
                 <h1 className="text-2xl font-bold">Annual Costs</h1>
                 <h1>Annual CSB Cost: ${annualCSBCost}</h1>
                 <h1>Annual Diesel Cost: ${annualDieselCost}</h1>
-                <h1>Annual Savings: ${annualSavings}</h1>
+                <h1>Annual Savings: ${Math.round((annualDieselCost-annualCSBCost)*100)/100}</h1>
             </div>
         </div>
     );
