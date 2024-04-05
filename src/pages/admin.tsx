@@ -114,9 +114,7 @@ export default function Admin() {
   const [dieselBusMilesPerGallon, setDieselBusMilesPerGallon] = useState(0);
   const [dieselDollarPerGallon, setDieselDollarPerGallon] = useState(0);
   const [summerEfficiency, setSummerEfficiency] = useState(0);
-  const [summerMonthsInOperation, setSummerMonthsInOperation] = useState(0);
   const [winterEfficiency, setWinterEfficiency] = useState(0);
-  const [winterMonthsInOperation, setWinterMonthsInOperation] = useState(0);
 
   // Bus data state
   const [busData, setBusData] = useState({});
@@ -132,7 +130,7 @@ export default function Admin() {
     maxRange: 0,
     bidirectional: false,
     chargingPort: "",
-    chargingType: [],
+    chargingType: "",
   });
 
   // Update state when data from context changes
@@ -143,9 +141,7 @@ export default function Admin() {
       setDieselBusMilesPerGallon(assumptionsData.diesel_bus_miles_per_gallon || 0);
       setDieselDollarPerGallon(assumptionsData.diesel_dollar_per_gallon || 0);
       setSummerEfficiency(assumptionsData.summer_efficiency || 0);
-      setSummerMonthsInOperation(assumptionsData.summer_months_in_op || 0);
       setWinterEfficiency(assumptionsData.winter_efficiency || 0);
-      setWinterMonthsInOperation(assumptionsData.winter_months_in_op || 0);
 
       // Update bus data state
       setBusData(context.data.buses || []);
@@ -222,14 +218,12 @@ export default function Admin() {
         diesel_bus_miles_per_gallon: dieselBusMilesPerGallon,
         diesel_dollar_per_gallon: dieselDollarPerGallon,
         summer_efficiency: summerEfficiency,
-        summer_months_in_op: summerMonthsInOperation,
         winter_efficiency: winterEfficiency,
       });
       context.data.assumptions[0] = {
         diesel_bus_miles_per_gallon: dieselBusMilesPerGallon,
         diesel_dollar_per_gallon: dieselDollarPerGallon,
         summer_efficiency: summerEfficiency,
-        summer_months_in_op: summerMonthsInOperation,
         winter_efficiency: winterEfficiency,
       }
       console.log("Assumptions updated");

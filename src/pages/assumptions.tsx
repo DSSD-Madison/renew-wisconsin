@@ -4,7 +4,7 @@ import {useState, useContext} from "react";
 import Calendar from "~/components/Calendar";
 import {MonthsData} from "~/components/Calendar";
 import DemandChargesTable from "~/components/DemandChargesTable";
-import {SummerWinterCharges, DistrictDemandCharge} from "~/components/DemandChargesTable";
+import {SummerWinterCharges, DistributionDemandCharge} from "~/components/DemandChargesTable";
 import LoadingSpinner from "~/components/equipment/loading_bar"; // Assuming LoadingSpinner is in the same directory
 import EfficienciesTable from '~/components/EfficienciesTable';
 
@@ -17,7 +17,7 @@ export default function Input() {
     const monthsData: MonthsData = context.data.operation_schedule[0];
 
     const rates = context.data.rates;
-    const districtCharge: DistributionDemandCharge = rates[0];
+    const distributionCharge: DistributionDemandCharge = rates[0];
     const summerCharges: SummerWinterCharges = rates[1];
     const winterCharges: SummerWinterCharges = rates[2];
 
@@ -89,7 +89,7 @@ export default function Input() {
                 <DemandChargesTable 
                   summerCharges={summerCharges}
                   winterCharges={winterCharges}
-                  distributionCharge={districtCharge} 
+                  distributionCharge={distributionCharge} 
                   onValueChange={handleRatesChange} />
               </div>
               <div className='m-5 p-5'>
