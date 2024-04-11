@@ -104,6 +104,23 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
     const monthlySavings = totalMonthlySavings.map((save, index)=>
     <td key={index} className="text-sm">${save}</td>)
 
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
+    useEffect(() => {
+        const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        setIsDarkMode(darkModeMediaQuery.matches);
+
+        const darkModeChangeListener = (event:any) => {
+            setIsDarkMode(event.matches);
+        };
+
+        darkModeMediaQuery.addEventListener('change', darkModeChangeListener);
+
+        return () => {
+            darkModeMediaQuery.removeEventListener('change', darkModeChangeListener);
+        };
+    }, []);
+                                                     
     //Values from the Bus components used for cost summary
     
     const addToWinterDailyCost = (data: number) => {
@@ -208,6 +225,11 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
         }
     }
 
+    const titleStyle = {
+        fontSize: '2em',
+        marginBottom: '10px',
+    };
+
     return(
         <div>
             <div className="join join-vertical w-full">
@@ -226,7 +248,7 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
                 </button>
             </div>
             <div className="m-7">
-                <h1 className="text-2xl font-bold">Monthly Costs</h1>
+            <h1 style={{ ...titleStyle, color: isDarkMode ? 'white' : '#333' }} className="text-2xl">Monthly Costs</h1>
                 <div className="overflow-x-auto">
                     <table className="table table-xs table-pin-rows table-pin-cols">
                         <thead>
@@ -285,7 +307,7 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
                 </div>
             </div>
             <div className="m-7">
-                <h1 className="text-2xl font-bold">Annual Costs</h1>
+                <h1 style={{ ...titleStyle, color: isDarkMode ? 'white' : '#333' }} className="text-2xl">Annual Costs</h1>
                 <h1>Annual CSB Cost: ${annualCSBCost}</h1>
                 <h1>Annual Diesel Cost: ${annualDieselCost}</h1>
                 <h1>Annual Savings: ${Math.round((annualDieselCost-annualCSBCost)*100)/100}</h1>
