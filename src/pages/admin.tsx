@@ -99,7 +99,6 @@ const fbAuthErrors: Record<string, string> = {
   "weak-password": "The password must be 6 characters long or more.",
   "web-storage-unsupported": "This browser is not supported or 3rd party cookies and data may be disabled."
 }
-
 export default function Admin() {
   const context = useContext(DataContext);
 
@@ -114,7 +113,6 @@ export default function Admin() {
   const [summerMonthsInOperation, setSummerMonthsInOperation] = useState(0);
   const [winterEfficiency, setWinterEfficiency] = useState(0);
   const [winterMonthsInOperation, setWinterMonthsInOperation] = useState(0);
-
   const [busData, setBusData] = useState({});
 
   const [newBus, setNewBus] = useState({
@@ -141,9 +139,7 @@ export default function Admin() {
       setDieselBusMilesPerGallon(assumptionsData.diesel_bus_miles_per_gallon || 0);
       setDieselDollarPerGallon(assumptionsData.diesel_dollar_per_gallon || 0);
       setSummerEfficiency(assumptionsData.summer_efficiency || 0);
-      setSummerMonthsInOperation(assumptionsData.summer_months_in_op || 0);
       setWinterEfficiency(assumptionsData.winter_efficiency || 0);
-      setWinterMonthsInOperation(assumptionsData.winter_months_in_op || 0);
 
       setBusData(context.data.buses || []);
     }
@@ -264,7 +260,6 @@ export default function Admin() {
         diesel_bus_miles_per_gallon: dieselBusMilesPerGallon,
         diesel_dollar_per_gallon: dieselDollarPerGallon,
         summer_efficiency: summerEfficiency,
-        summer_months_in_op: summerMonthsInOperation,
         winter_efficiency: winterEfficiency,
         winter_months_in_op: winterMonthsInOperation,
       });
@@ -273,7 +268,6 @@ export default function Admin() {
         diesel_bus_miles_per_gallon: dieselBusMilesPerGallon,
         diesel_dollar_per_gallon: dieselDollarPerGallon,
         summer_efficiency: summerEfficiency,
-        summer_months_in_op: summerMonthsInOperation,
         winter_efficiency: winterEfficiency,
         winter_months_in_op: winterMonthsInOperation,
       };
@@ -288,14 +282,14 @@ export default function Admin() {
   };
 
   return (
-    <section className="flex h-screen">
+    <section className="flex h-full">
       {context.loading ? (
         <div className="w-full h-full flex items-center justify-center">
           <LoadingSpinner />
         </div>
       ) : authed ? (
         <>
-          <aside className="w-64 bg-gray-800 text-white p-4 h-full">
+          <aside className="w-64 bg-gray-800 text-white p-4 min-h-screen">
             <h1 className="text-2xl font-bold mb-4">Admin Panel</h1>
             <ul>
               <li
@@ -308,11 +302,19 @@ export default function Admin() {
               </li>
               <li
                 className={`mb-2 p-2 rounded cursor-pointer ${
-                  activeTab === "manageBuses" ? "bg-gray-700" : ""
+                  activeTab === "addBus" ? "bg-gray-700" : ""
                 }`}
-                onClick={() => setActiveTab("manageBuses")}
+                onClick={() => setActiveTab("addBus")}
               >
-                Manage Buses
+                Add Buses
+              </li>
+              <li
+                className={`mb-2 p-2 rounded cursor-pointer ${
+                  activeTab === "deleteBus" ? "bg-gray-700" : ""
+                }`}
+                onClick={() => setActiveTab("deleteBus")}
+              >
+                Delete Buses
               </li>
               <li
                 className="mb-2 p-2 rounded cursor-pointer bg-red-700"
@@ -339,6 +341,7 @@ export default function Admin() {
                     </>
                   )}
                 </Field>
+                <p className="text-gray-500 text-sm mb-2">Example: 5</p>
                 <Field>
                   {(id) => (
                     <>
@@ -352,6 +355,7 @@ export default function Admin() {
                     </>
                   )}
                 </Field>
+                <p className="text-gray-500 text-sm mb-2">Example: 3.5</p>
                 <Field>
                   {(id) => (
                     <>
@@ -365,6 +369,7 @@ export default function Admin() {
                     </>
                   )}
                 </Field>
+                <p className="text-gray-500 text-sm mb-2">Example: 0.8</p>
                 <Field>
                   {(id) => (
                     <>
@@ -378,6 +383,7 @@ export default function Admin() {
                     </>
                   )}
                 </Field>
+                <p className="text-gray-500 text-sm mb-2">Example: 0.8</p>
                 <p className="text-red-500 mt-2">{error}</p>
                 <button
                   className="bg-green-500 text-white p-2 rounded mt-4 hover:bg-green-600 "
@@ -387,7 +393,7 @@ export default function Admin() {
                 </button>
               </div>
             )}
-            {activeTab === "manageBuses" && (
+            {activeTab === "addBus" && (
               <div className="bg-white rounded-lg ">
                 <h2 className="text-2xl font-semibold mb-4">Add A New Bus</h2>
                 
@@ -404,6 +410,7 @@ export default function Admin() {
                     </>
                   )}
                 </Field>
+                <p className="text-gray-500 text-sm mb-2">Example: 350000</p>
                 <Field>
                   {(id) => (
                     <>
@@ -417,6 +424,7 @@ export default function Admin() {
                     </>
                   )}
                 </Field>
+                <p className="text-gray-500 text-sm mb-2">Example: 450000</p>
                 <Field>
                   {(id) => (
                     <>
@@ -429,6 +437,7 @@ export default function Admin() {
                     </>
                   )}
                 </Field>
+                <p className="text-gray-500 text-sm mb-2">Example: ABC Motors</p>
                 <Field>
                   {(id) => (
                     <>
@@ -441,6 +450,7 @@ export default function Admin() {
                     </>
                   )}
                 </Field>
+                <p className="text-gray-500 text-sm mb-2">Example: XYZ 3000</p>
                 <Field>
                   {(id) => (
                     <>
@@ -454,6 +464,7 @@ export default function Admin() {
                     </>
                   )}
                 </Field>
+                <p className="text-gray-500 text-sm mb-2">Example: 80</p>
                 <Field>
                   {(id) => (
                     <>
@@ -467,6 +478,7 @@ export default function Admin() {
                     </>
                   )}
                 </Field>
+                <p className="text-gray-500 text-sm mb-2">Example: 31000</p>
                 <Field>
                   {(id) => (
                     <>
@@ -480,6 +492,7 @@ export default function Admin() {
                     </>
                   )}
                 </Field>
+                <p className="text-gray-500 text-sm mb-2">Example: 210</p>
                 <Field>
                   {(id) => (
                     <>
@@ -493,6 +506,7 @@ export default function Admin() {
                     </>
                   )}
                 </Field>
+                <p className="text-gray-500 text-sm mb-2">Example: 135</p>
                 <Field>
                   {(id) => (
                     <>
@@ -505,6 +519,7 @@ export default function Admin() {
                     </>
                   )}
                 </Field>
+                <p className="text-gray-500 text-sm mb-2">Example: (AC, DC)</p>
                 <Field>
                   {(id) => (
                     <>
@@ -518,7 +533,7 @@ export default function Admin() {
                         pattern="^(\d+,)*\d+$"
                         title="Please enter charging types in the format '1,2,3'"
                       />
-                      <p className="text-gray-500 text-sm mt-1 mb-2">
+                      <p className="text-gray-500 text-sm mb-2">
                         Examples: "2,3" or "3" or "1,2,3"
                       </p>
                     </>
@@ -542,8 +557,30 @@ export default function Admin() {
               >
                 Add Bus
               </button>
+              
               </div>
             )}
+
+            {
+              activeTab === "deleteBus" && (
+                <>
+                  <h3 className="text-xl font-semibold mt-8 mb-4">Existing Buses</h3>
+                  <ul>
+                    {context.data.buses.map((bus) => (
+                      <li key={bus.model} className="flex items-center justify-between mb-2">
+                        <span>{bus.company} - {bus.model}</span>
+                        <button
+                          className="bg-red-500 text-white p-1 rounded hover:bg-red-600"
+                          onClick={() => {}}
+                        >
+                          Delete
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )
+            }
           </main>
         </>
       ) : (

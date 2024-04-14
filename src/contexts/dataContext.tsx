@@ -9,10 +9,10 @@ const DataContextProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [authed, setAuthed] = useState<boolean>(false);
   const [data, setData] = useState<any>({
-    busData: [],
-    summerCharging: [],
-    winterCharging: [],
-    operationSchedule: [],
+    buses: [],
+    summer_charging: [],
+    winter_charging: [],
+    operation_schedule: [],
     rates: [],
     assumptions: []
   });
@@ -46,7 +46,7 @@ const DataContextProvider = ({ children }: { children: ReactNode }) => {
     fetchData();
   }, []);
 
-  const value = { loading, authed, setAuthed, data };
+  const value = { loading, authed, setAuthed, data, setData };
 
   return (
     <DataContext.Provider value={value}>{children}</DataContext.Provider>
