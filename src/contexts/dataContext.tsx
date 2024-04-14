@@ -36,7 +36,6 @@ const DataContextProvider = ({ children }: { children: ReactNode }) => {
 
         const newData = Object.fromEntries(snapshots.map((snapshot, index) => [collections[index], snapshot.docs.map(doc => doc.data())]));
         setData(newData);
-        console.log("Data fetched:", newData);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);

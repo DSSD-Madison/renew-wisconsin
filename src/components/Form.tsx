@@ -9,7 +9,7 @@ interface FieldProps {
 export function Field({ className, children }: FieldProps) {
   const id = useId();
 
-  return <div className={className}>{children(id)}</div>;
+  return <div className={"mb-2 " + className}>{children(id)}</div>;
 }
 
 export function Label({ ...props }: JSX.IntrinsicElements["label"]) {
