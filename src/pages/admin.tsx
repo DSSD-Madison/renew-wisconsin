@@ -4,7 +4,7 @@ import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebas
 import { Field, Label, Input } from "~/components/Form";
 import { DataContext } from "~/contexts/dataContext";
 import LoadingSpinner from "~/components/equipment/loading_bar";
-import { updateDoc, doc, setDoc } from "firebase/firestore";
+import { updateDoc, doc, setDoc, deleteDoc } from "firebase/firestore";
 
 const fbAuthErrors: Record<string, string> = {
   "admin-restricted-operation": "This operation is restricted to administrators only.",
@@ -99,6 +99,8 @@ const fbAuthErrors: Record<string, string> = {
   "weak-password": "The password must be 6 characters long or more.",
   "web-storage-unsupported": "This browser is not supported or 3rd party cookies and data may be disabled."
 }
+
+
 export default function Admin() {
   const context = useContext(DataContext);
 
@@ -132,6 +134,26 @@ export default function Admin() {
   const [error, setError] = useState("");
 
   const [activeTab, setActiveTab] = useState("assumptions");
+  const [toDelete, setToDelete] = useState("");
+
+  const DeleteModal = () => {
+    return (
+      <>
+        {
+          toDelete !== "" && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+              <div className="bg-white p-4 rounded-lg">
+                <h3 className="text-xl font-semibold mb-4">Delete Bus: {toDelete}</h3>
+                <p className="text-l mb-4">Are you sure you want to delete this bus?</p>
+                <button onClick={() => setToDelete("")} className="bg-gray-500 text-white p-2 rounded hover:bg-gray-600 mr-2">Cancel</button>
+                <button onClick={() => handleDeleteBus(toDelete)} className="bg-red-500 text-white p-2 rounded hover:bg-red-600">Delete</button>
+              </div>
+            </div>
+          )
+        }
+      </>
+    )
+  }
 
   useEffect(() => {
     if (!context.loading && context.authed) {
@@ -174,6 +196,15 @@ export default function Admin() {
 
   const handleAddBus = async () => {
     try {
+      
+      if (newBus.model === "") {
+        setError("Model name cannot be empty.");
+        return;
+      }
+      if (newBus.company === "") {
+        setError("Company name cannot be empty.");
+        return;
+      }
       // Validate input fields
       if (newBus.priceLow < 0 || newBus.priceHigh < 0) {
         setError("Price values cannot be negative.");
@@ -195,8 +226,17 @@ export default function Admin() {
         setError("Max range cannot be negative.");
         return;
       }
+      if (newBus.chargingPort === "") {
+        setError("Charging port cannot be empty.");
+        return;
+      }
+      if (newBus.chargingType.length === 0) {
+        setError("Charging type cannot be empty.");
+        return;
+      }
       if (newBus.chargingType.some(type => !["1", "2", "3"].includes(type))) {
-        setError("Charging type can only include values '1', '2', or '3'.");
+        console.log(newBus.chargingType);
+        setError("Charging type can only include values '1', '2', or '3'. Please enter a comma-separated list of these values with no spaces.");
         return;
       }
       
@@ -281,6 +321,23 @@ export default function Admin() {
     }
   };
 
+  const handleDeleteBus = async (model : string) => {
+    try {
+      // Delete bus from database
+      const busRef = doc(db, "buses", model);
+      await deleteDoc(busRef);
+
+      // Delete bus from context
+      context.data.buses = context.data.buses.filter((bus: any) => bus.model !== model);
+
+      alert("Bus deleted successfully!");
+      setToDelete("");
+    } catch (error) {
+      console.error("Error deleting bus:", error);
+      alert("An error occurred while deleting the bus.");
+    }
+  }
+
   return (
     <section className="flex h-full">
       {context.loading ? (
@@ -289,6 +346,7 @@ export default function Admin() {
         </div>
       ) : authed ? (
         <>
+          <DeleteModal />
           <aside className="w-64 bg-gray-800 text-white p-4 min-h-screen">
             <h1 className="text-2xl font-bold mb-4">Admin Panel</h1>
             <ul>
@@ -560,33 +618,35 @@ export default function Admin() {
               
               </div>
             )}
-
-            {
-              activeTab === "deleteBus" && (
-                <>
-                  <h3 className="text-xl font-semibold mt-8 mb-4">Existing Buses</h3>
-                  <ul>
-                    {context.data.buses.map((bus) => (
-                      <li key={bus.model} className="flex items-center justify-between mb-2">
-                        <span>{bus.company} - {bus.model}</span>
-                        <button
-                          className="bg-red-500 text-white p-1 rounded hover:bg-red-600"
-                          onClick={() => {}}
-                        >
-                          Delete
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )
-            }
+          {activeTab === "deleteBus" && (
+            <>
+              <h2 className="text-2xl font-semibold mb-4">Existing Buses</h2>
+              <ul>
+                {context.data.buses.map((bus: any) => (
+                  <li
+                    key={bus.model}
+                    className="flex items-center justify-between mb-2 p-4 bg-gray-100 rounded"
+                  >
+                    <span className="text-gray-800">
+                      {bus.company} - {bus.model}
+                    </span>
+                    <button
+                      className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition duration-200"
+                      onClick={() => setToDelete(bus.model)}
+                    >
+                      Delete
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
           </main>
         </>
       ) : (
-        <div className="flex items-center justify-center w-full">
+        <div className="flex items-center justify-center w-full mt-64">
           <div className="bg-white p-8 rounded-lg shadow-md">
-            <h2 className="text-2xl font-semibold mb-4">Sign In</h2>
+            <h2 className="text-2xl font-semibold mb-4">Sign In To Admin Panel</h2>
             <input
               type="email"
               className="w-full px-3 py-2 rounded border mb-4"
