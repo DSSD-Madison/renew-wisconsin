@@ -592,7 +592,7 @@ export default function Admin() {
                         title="Please enter charging types in the format '1,2,3'"
                       />
                       <p className="text-gray-500 text-sm mb-2">
-                        Examples: "2,3" or "3" or "1,2,3"
+                        Examples: &quot;2,3&quot; or &quot;3&quot; or &quot;1,2,3&quot;
                       </p>
                     </>
                   )}
