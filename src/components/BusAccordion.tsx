@@ -122,11 +122,9 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
         setValsInitialized(true);
     }
 
-    //Only called when charging time of day is in the daytime
     const addToOnPeakkWPerMonth = (data: number) => {
         const op = Math.round((onPeakkWPerMonth+data)*100)/100;
         setOnPeakkWPerMonth(op);
-        console.log(onPeakDemand);
         let opWinter = 0;
         let opSummer = 0;
         if(op > 25){
@@ -157,9 +155,10 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
         }
     }
 
-    const findNewMaxCharger = () => {
+    const findNewMaxCharger = (skip : number) => {
         let max = 0;
         for(let i = 1; i < Object.keys(buses).length+1; i++){
+            if(i == skip) continue;
             if(max < buses[i].chargerPower){
                 max = buses[i].chargerPower;
             }
@@ -207,7 +206,7 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
             addToWinterDailyCost(-1*removeWinter);
             addToSummerDailyCost(-1*removeSummer);
             addToDieselDailyCost(-1*removeDiesel);
-            findNewMaxCharger();
+            findNewMaxCharger(-1);
             deleteLastBusLocal();
             setBusCount(busCount-1);
         }
@@ -218,7 +217,7 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
             <div className="join join-vertical w-full">
                 {Object.values(buses).map(bus => {
                     return (
-                        <Bus key={bus.id} id={bus.id} wintercost={addToWinterDailyCost} summercost={addToSummerDailyCost} maxCharger={findMaxCharger} dieselcost={addToDieselDailyCost} onPeakDemand={addToOnPeakkWPerMonth}/>
+                        <Bus key={bus.id} id={bus.id} wintercost={addToWinterDailyCost} summercost={addToSummerDailyCost} maxCharger={findMaxCharger} newMaxCharger={findNewMaxCharger} dieselcost={addToDieselDailyCost} onPeakDemand={addToOnPeakkWPerMonth}/>
                     )
                 })}
             </div>
@@ -231,14 +230,14 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
                 </button>
             </div>
             <div className="m-7">
-                <h1 className="text-2xl font-bold">Monthly Costs</h1>
-                <div className="overflow-x-auto">
+                <h1 className="text-2xl font-bold py-2">Monthly Costs</h1>
+                <div>
                     <table className="table table-xs table-pin-rows table-pin-cols">
                         <thead>
                             <tr className="bg-gray-100">
                                 <th className="bg-gray-100"></th>
                                 {sortedMonths.map((month, index) => (
-                                    <td key={index} className={monthsData[month] ? 'text-[#3b9044] text-base' : 'text-red-700 text-base'}>{month}</td>
+                                    <td key={index} className={monthsData[month] ? 'text-[#3b9044] text-base py-2' : 'text-red-700 text-base py-2'}>{month}</td>
                                 ))}
                             </tr>
                         </thead>
@@ -290,7 +289,7 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
                 </div>
             </div>
             <div className="m-7">
-                <h1 className="text-2xl font-bold">Annual Costs</h1>
+                <h1 className="text-2xl font-bold py-2">Annual Costs</h1>
                 <h1>Annual CSB Cost: ${annualCSBCost}</h1>
                 <h1>Annual Diesel Cost: ${annualDieselCost}</h1>
                 <h1>Annual Savings: ${Math.round((annualDieselCost-annualCSBCost)*100)/100}</h1>

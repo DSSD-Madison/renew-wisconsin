@@ -40,8 +40,9 @@ const Bus = (props: any) => {
   const [dieselCostPerDay, setDieselCostPerDay] = useState(buses[props.id] ? buses[props.id].totalDiesalCost: 0);
 
   useEffect(() => {
+    busModelChange(busModel);
     busRouteChange(routeMiles);
-  }, [maxCapacity, summerRange, winterRange]);
+  }, [maxCapacity, summerRange, winterRange, kWhSummer]);
 
   useEffect(() => {
     chargerPowerChange(String(chargerPower));
@@ -255,6 +256,9 @@ const Bus = (props: any) => {
       if(timeOfDay == "Overnight" && chargerPower > 29){
         props.onPeakDemand(chargerPower);
       }
+      if(timeOfDay == "N/A"){
+        props.newMaxCharger(-1);
+      }
       return;
     }
     if (time == "Overnight") {
@@ -274,6 +278,9 @@ const Bus = (props: any) => {
       if(timeOfDay == "Daytime" && chargerPower > 29){
         props.onPeakDemand(-1*chargerPower);
       }
+      if(timeOfDay == "N/A"){
+        props.newMaxCharger(-1);
+      }
       return;
     }
     setTimeOfDay("N/A");
@@ -284,6 +291,7 @@ const Bus = (props: any) => {
     if(timeOfDay == "Daytime" && chargerPower > 29){
       props.onPeakDemand(-1*chargerPower);
     }
+    props.newMaxCharger(props.id);
     return;
   }
 
@@ -296,8 +304,19 @@ const Bus = (props: any) => {
       return;
     }
     props.maxCharger(powerTemp);
-    if (timeOfDay == "Daytime" && powerTemp > 29) {
+    //Handle Summary Changes
+    if (timeOfDay == "Daytime" && powerTemp > 29 && chargerPower > 29) {
       props.onPeakDemand(powerTemp - chargerPower);
+    }
+    else{
+      if(timeOfDay == "Daytime" && powerTemp > 29){
+        props.onPeakDemand(powerTemp);
+      }
+      else{
+        if(timeOfDay == "Daytime" && chargerPower > 29 && powerTemp <= 29){
+          props.onPeakDemand(-1*chargerPower)
+        }
+      }
     }
     setChargerPower(powerTemp);
     setSummerChargingTime(
@@ -336,6 +355,7 @@ const Bus = (props: any) => {
     } else {
       setDemandCharge(0.0);
     }
+    console.log(dollarsPerGal)
     var d = 0;
     if (Number(routeMiles) != 0) {
       d =
@@ -536,7 +556,7 @@ const Bus = (props: any) => {
           <br></br>
           <h1
             className="tooltip tooltip-right cursor-help"
-            data-tip="If the bus is being charged during On-Peak hours and requires 40 or more kWs, the demand charge will be Charger Power (kW) * The average of On-Peak $/kW in the summer and winter."
+            data-tip="If the bus is being charged during On-Peak hours and requires 30 or more kWs, the demand charge will be Charger Power (kW) * The average of On-Peak $/kW in the summer and winter."
           >
             Demand Charge<span className="text-[#2495c4]">* </span>: <span className="font-bold">${demandCharge}</span>
           </h1>
