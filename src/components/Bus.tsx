@@ -40,8 +40,9 @@ const Bus = (props: any) => {
   const [dieselCostPerDay, setDieselCostPerDay] = useState(buses[props.id] ? buses[props.id].totalDiesalCost: 0);
 
   useEffect(() => {
+    busModelChange(busModel);
     busRouteChange(routeMiles);
-  }, [maxCapacity, summerRange, winterRange]);
+  }, [maxCapacity, summerRange, winterRange, kWhSummer]);
 
   useEffect(() => {
     chargerPowerChange(String(chargerPower));
@@ -251,6 +252,13 @@ const Bus = (props: any) => {
           ? winterRates["on_peak_kWh"]
           : 0.08,
       );
+      // If the time of day was previously overnight then add the charger power to the summary
+      if(timeOfDay == "Overnight" && chargerPower > 29){
+        props.onPeakDemand(chargerPower);
+      }
+      if(timeOfDay == "N/A"){
+        props.newMaxCharger(-1);
+      }
       return;
     }
     if (time == "Overnight") {
@@ -267,6 +275,12 @@ const Bus = (props: any) => {
           ? winterRates["off_peak_kWh"]
           : 0.054,
       );
+      if(timeOfDay == "Daytime" && chargerPower > 29){
+        props.onPeakDemand(-1*chargerPower);
+      }
+      if(timeOfDay == "N/A"){
+        props.newMaxCharger(-1);
+      }
       return;
     }
     setTimeOfDay("N/A");
@@ -274,6 +288,10 @@ const Bus = (props: any) => {
     setOnPeakWinter(0.0);
     setkWhSummer(0.0);
     setkWhWinter(0.0);
+    if(timeOfDay == "Daytime" && chargerPower > 29){
+      props.onPeakDemand(-1*chargerPower);
+    }
+    props.newMaxCharger(props.id);
     return;
   }
 
@@ -286,8 +304,19 @@ const Bus = (props: any) => {
       return;
     }
     props.maxCharger(powerTemp);
-    if (timeOfDay == "Daytime") {
+    //Handle Summary Changes
+    if (timeOfDay == "Daytime" && powerTemp > 29 && chargerPower > 29) {
       props.onPeakDemand(powerTemp - chargerPower);
+    }
+    else{
+      if(timeOfDay == "Daytime" && powerTemp > 29){
+        props.onPeakDemand(powerTemp);
+      }
+      else{
+        if(timeOfDay == "Daytime" && chargerPower > 29 && powerTemp <= 29){
+          props.onPeakDemand(-1*chargerPower)
+        }
+      }
     }
     setChargerPower(powerTemp);
     setSummerChargingTime(
@@ -326,6 +355,7 @@ const Bus = (props: any) => {
     } else {
       setDemandCharge(0.0);
     }
+    console.log(dollarsPerGal)
     var d = 0;
     if (Number(routeMiles) != 0) {
       d =
@@ -363,14 +393,14 @@ const Bus = (props: any) => {
               className="tooltip cursor-help text-sm"
               data-tip="The maximum amount of electricity (in kilowatt hours) the bus's battery can store."
             >
-              <span className="font-bold">{busModel}</span> Battery Capacity: <span className="font-bold">{maxCapacity}</span> kWh
+              <span className="font-bold">{busModel}</span> Battery Capacity<span className="text-[#2495c4]">* </span>: <span className="font-bold">{maxCapacity}</span> kWh
             </span>
             <br />
             <span
               className="tooltip cursor-help text-sm"
               data-tip="The maximum number of miles the bus will be able to drive off of one full capacity charge"
             >
-              Summer Range: <span className="font-bold">{summerRange}</span>{" "}
+              Summer Range<span className="text-[#2495c4]">* </span>: <span className="font-bold">{summerRange}</span>{" "}
               miles
             </span>
             <br />
@@ -433,7 +463,7 @@ const Bus = (props: any) => {
                 className="label-text tooltip tooltip-right cursor-help"
                 data-tip="Select the time of day the bus will be charged during. Charging during On-Peak hours will result in higher monthly demand charges."
               >
-                Time of Day
+                Time of Day<span className="text-[#2495c4]">*</span>
               </span>
             </label>
             <select
@@ -460,7 +490,7 @@ const Bus = (props: any) => {
                 className="label-text tooltip tooltip-right cursor-help"
                 data-tip="The amount of power provided by the electric vehicle charger used to charge the bus. Chargers that provide more kilowatts on demand can recharge buses faster but will result in higher electric demand charges in addition to the electricity charges."
               >
-                Charger Power (kW)
+                Charger Power (kW)<span className="text-[#2495c4]">*</span>
               </span>
             </label>
             <select
@@ -508,7 +538,7 @@ const Bus = (props: any) => {
             className="tooltip tooltip-right cursor-help"
             data-tip="Cost of one kWh in the Summer * Number of kWhs used for 1 route in the Summer."
           >
-            Total Electricity Cost per Day in Summer:{" "}
+            Total Electricity Cost per Day in Summer<span className="text-[#2495c4]">* </span>:{" "}
             <span className="font-bold">
               ${totalElectrictyCostPerDaySummer}
             </span>
@@ -518,7 +548,7 @@ const Bus = (props: any) => {
             className="tooltip tooltip-right cursor-help"
             data-tip="Cost of one kWh in the Winter * Number of kWhs used for 1 route in the Winter."
           >
-            Total Electricity Cost per Day in Winter:{" "}
+            Total Electricity Cost per Day in Winter<span className="text-[#2495c4]">* </span>:{" "}
             <span className="font-bold">
               ${totalElectrictyCostPerDayWinter}
             </span>
@@ -526,16 +556,16 @@ const Bus = (props: any) => {
           <br></br>
           <h1
             className="tooltip tooltip-right cursor-help"
-            data-tip="If the bus is being charged during On-Peak hours and requires 40 or more kWs, the demand charge will be Charger Power (kW) * The average of On-Peak $/kW in the summer and winter."
+            data-tip="If the bus is being charged during On-Peak hours and requires 30 or more kWs, the demand charge will be Charger Power (kW) * The average of On-Peak $/kW in the summer and winter."
           >
-            Demand Charge: <span className="font-bold">${demandCharge}</span>
+            Demand Charge<span className="text-[#2495c4]">* </span>: <span className="font-bold">${demandCharge}</span>
           </h1>
           <br></br>
           <h1
             className="tooltip tooltip-right cursor-help"
             data-tip="The cost to fuel a diesel bus that travels the same route in a day as the electric school bus."
           >
-            Total Diesel Cost per Day:{" "}
+            Total Diesel Cost per Day<span className="text-[#2495c4]">* </span>:{" "}
             <span className="font-bold">${dieselCostPerDay}</span>
           </h1>
         </div>

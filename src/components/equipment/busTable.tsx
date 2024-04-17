@@ -10,7 +10,7 @@ export const BusTable: React.FC<BusTableProps> = ({data}) => {
         <table className="w-full table-auto border-collapse">
             <thead className="bg-gray-100 text-gray-700">
             <tr className="">
-                <th className="sticky left-0 h-fit bg-gray-50">Model</th>
+                <th className="sticky left-0 h-fit">Model</th>
                 <th className="py-2 px-4">Company</th>
                 <th className="py-2 px-4">Passenger Capacity</th>
                 <th className="py-2 px-4">GVWR</th>

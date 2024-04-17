@@ -122,7 +122,6 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
         setValsInitialized(true);
     }
 
-    //Only called when charging time of day is in the daytime
     const addToOnPeakkWPerMonth = (data: number) => {
         const op = Math.round((onPeakkWPerMonth+data)*100)/100;
         setOnPeakkWPerMonth(op);
@@ -156,9 +155,10 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
         }
     }
 
-    const findNewMaxCharger = () => {
+    const findNewMaxCharger = (skip : number) => {
         let max = 0;
         for(let i = 1; i < Object.keys(buses).length+1; i++){
+            if(i == skip) continue;
             if(max < buses[i].chargerPower){
                 max = buses[i].chargerPower;
             }
@@ -199,10 +199,14 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
             let removeWinter = Math.round(buses[busId].kWhOneRouteWinter*buses[busId].dollarkWhWinter*100)/100;
             let removeSummer = Math.round(buses[busId].kWhOneRouteSummer*buses[busId].dollarkWhSummer*100)/100;
             let removeDiesel = Math.round(buses[busId].totalDiesalCost);
+            let removeChargerPower = Math.round(buses[busId].batteryCapacity*100)/100;
+            if(buses[busId].timeOfDay == "Daytime" && removeChargerPower > 29){
+                addToOnPeakkWPerMonth(-1*removeChargerPower)
+            }
             addToWinterDailyCost(-1*removeWinter);
             addToSummerDailyCost(-1*removeSummer);
             addToDieselDailyCost(-1*removeDiesel);
-            findNewMaxCharger();
+            findNewMaxCharger(-1);
             deleteLastBusLocal();
             setBusCount(busCount-1);
         }
@@ -213,7 +217,7 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
             <div className="join join-vertical w-full">
                 {Object.values(buses).map(bus => {
                     return (
-                        <Bus key={bus.id} id={bus.id} wintercost={addToWinterDailyCost} summercost={addToSummerDailyCost} maxCharger={findMaxCharger} dieselcost={addToDieselDailyCost} onPeakDemand={addToOnPeakkWPerMonth}/>
+                        <Bus key={bus.id} id={bus.id} wintercost={addToWinterDailyCost} summercost={addToSummerDailyCost} maxCharger={findMaxCharger} newMaxCharger={findNewMaxCharger} dieselcost={addToDieselDailyCost} onPeakDemand={addToOnPeakkWPerMonth}/>
                     )
                 })}
             </div>
@@ -226,48 +230,48 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
                 </button>
             </div>
             <div className="m-7">
-                <h1 className="text-2xl font-bold">Monthly Costs</h1>
-                <div className="overflow-x-auto">
+                <h1 className="text-2xl font-bold py-2">Monthly Costs</h1>
+                <div>
                     <table className="table table-xs table-pin-rows table-pin-cols">
                         <thead>
-                            <tr>
-                                <th></th>
+                            <tr className="bg-gray-100">
+                                <th className="bg-gray-100"></th>
                                 {sortedMonths.map((month, index) => (
-                                    <td key={index} className={monthsData[month] ? 'text-[#3b9044] text-base' : 'text-red-700 text-base'}>{month}</td>
+                                    <td key={index} className={monthsData[month] ? 'text-[#3b9044] text-base py-2' : 'text-red-700 text-base py-2'}>{month}</td>
                                 ))}
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th className="text-sm font-normal tooltip tooltip-right cursor-help" 
+                            <tr className="bg-gray-50">
+                                <th className="text-sm bg-gray-50 font-normal tooltip tooltip-right cursor-help" 
                                     data-tip="The daily cost to charge all operational buses for the corresponding month.">
-                                    $/kWh per Day
+                                    $/kWh per Day<span className="text-[#2495c4]">* </span>
                                 </th>
                                 {kWhPerDayCost}
                             </tr>
                             <tr>
                                 <th className="text-sm font-normal tooltip tooltip-right cursor-help" 
                                     data-tip="This demand charge is applied based on the maximum number of kilowatts used at once by the selected chargers during On-Peak hours.">
-                                    On-Peak Demand Charge per Month
+                                    On-Peak Demand Charge per Month<span className="text-[#2495c4]">* </span>
                                 </th> 
                                 {onPeakDemand}
                             </tr>
-                            <tr>
-                                <th className="text-sm font-normal tooltip tooltip-right cursor-help"
+                            <tr className="bg-gray-50">
+                                <th className="text-sm bg-gray-50 font-normal tooltip tooltip-right cursor-help"
                                     data-tip="This charge is based on the maximum number of kilowatts used at once over the whole year. This charge will be the same for every month and is dependent on the time of the highest power use.">
-                                    Distribution Demand Charge per Month
+                                    Distribution Demand Charge per Month<span className="text-[#2495c4]">* </span>
                                 </th>
                                 {distributionDemandCharge}
                             </tr>
                             <tr>
                                 <th className="text-sm font-normal tooltip tooltip-right cursor-help"
                                     data-tip="The total electricity cost for all operational buses per month.">
-                                    Total CSB Cost per Month
+                                    Total CSB Cost per Month<span className="text-[#2495c4]">* </span>
                                 </th> 
                                 {csbCostPerMonth}
                             </tr>
-                            <tr>
-                                <th className="text-sm font-normal tooltip tooltip-right cursor-help" 
+                            <tr className="bg-gray-50">
+                                <th className="text-sm bg-gray-50 font-normal tooltip tooltip-right cursor-help" 
                                     data-tip="The mirrored total cost to fuel the same number of operational diesel buses per month.">
                                     Total Diesel Cost per Month
                                 </th> 
@@ -276,7 +280,7 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
                             <tr>
                                 <th className="text-sm font-normal tooltip tooltip-right cursor-help"
                                     data-tip="The amount of money saved per month by utilizing electric school buses rather than diesel buses.">
-                                    Total Monthly Savings
+                                    Total Monthly Savings<span className="text-[#2495c4]">* </span>
                                 </th> 
                                 {monthlySavings}
                             </tr>
@@ -285,7 +289,7 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
                 </div>
             </div>
             <div className="m-7">
-                <h1 className="text-2xl font-bold">Annual Costs</h1>
+                <h1 className="text-2xl font-bold py-2">Annual Costs</h1>
                 <h1>Annual CSB Cost: ${annualCSBCost}</h1>
                 <h1>Annual Diesel Cost: ${annualDieselCost}</h1>
                 <h1>Annual Savings: ${Math.round((annualDieselCost-annualCSBCost)*100)/100}</h1>

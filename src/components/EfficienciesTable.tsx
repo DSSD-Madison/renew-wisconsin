@@ -50,8 +50,8 @@ const EfficienciesTable: React.FC<EfficienciesProps> = ({
         onValueChange(key, percentage ? clampedValue * .01 : clampedValue);
     };
   return (
-    <div className="overflow-x-auto">
-        <table className="table w-full">
+    <div className="table w-full">
+        <table>
         <thead>
             <tr>
             <th>Summer Efficiency (%)</th>
