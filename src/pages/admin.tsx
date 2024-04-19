@@ -339,7 +339,7 @@ export default function Admin() {
   }
 
   return (
-    <section className="w-screen h-full justify-center">
+    <section className={authed ? "flex h-full" : "w-screen h-full justify-center"}>
       {context.loading ? (
         <div className="w-full h-full flex items-center justify-center">
           <LoadingSpinner />
