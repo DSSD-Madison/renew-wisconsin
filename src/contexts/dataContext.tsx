@@ -9,10 +9,10 @@ const DataContextProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [authed, setAuthed] = useState<boolean>(false);
   const [data, setData] = useState<any>({
-    busData: [],
-    summerCharging: [],
-    winterCharging: [],
-    operationSchedule: [],
+    buses: [],
+    summer_charging: [],
+    winter_charging: [],
+    operation_schedule: [],
     rates: [],
     assumptions: []
   });
@@ -36,7 +36,6 @@ const DataContextProvider = ({ children }: { children: ReactNode }) => {
 
         const newData = Object.fromEntries(snapshots.map((snapshot, index) => [collections[index], snapshot.docs.map(doc => doc.data())]));
         setData(newData);
-        console.log("Data fetched:", newData);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
