@@ -339,7 +339,7 @@ export default function Admin() {
   }
 
   return (
-    <section className="flex h-full">
+    <section className="w-screen h-full justify-center">
       {context.loading ? (
         <div className="w-full h-full flex items-center justify-center">
           <LoadingSpinner />
@@ -644,7 +644,7 @@ export default function Admin() {
           </main>
         </>
       ) : (
-        <div className="flex items-center justify-center w-full mt-64">
+        <div className="flex items-center justify-center mt-20">
           <div className="bg-white p-8 rounded-lg shadow-md">
             <h2 className="text-2xl font-semibold mb-4">Sign In To Admin Panel</h2>
             <input
