@@ -231,7 +231,7 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
             </div>
             <div className="m-7">
                 <h1 className="text-2xl font-bold py-2">Monthly Costs</h1>
-                <div>
+                <div className="overflow-x-auto">
                     <table className="table table-xs table-pin-rows table-pin-cols">
                         <thead>
                             <tr className="bg-gray-100">
@@ -272,8 +272,8 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
                             </tr>
                             <tr className="bg-gray-50">
                                 <th className="text-sm bg-gray-50 font-normal tooltip tooltip-right cursor-help" 
-                                    data-tip="The mirrored total cost to fuel the same number of operational diesel buses per month.">
-                                    Total Diesel Cost per Month
+                                    data-tip="The total cost to fuel the same number of operational diesel buses per month.">
+                                    Total Diesel Cost per Month<span className="text-[#2495c4]">* </span>
                                 </th> 
                                 {dieselCostPerMonth}
                             </tr>
