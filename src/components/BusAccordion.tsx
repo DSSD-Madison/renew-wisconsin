@@ -25,15 +25,7 @@ const BusAccordion = (props: any) => {
     const [totalCSBSummer, setTotalCSBSummer] = useState(summary.summerMonthCost);
     const [totalCSBWinter, setTotalCSBWinter] = useState(summary.winterMonthCost);
     const [annualCSBCost, setAnnualCSBCost] = useState(summary.annualCSBCost);
-    const [valsInitialized, setValsInitialized] = useState(false);
 
-    useEffect(() => {
-        calculateDistDemandCharge();
-    },[maxChargerPower]);
-
-    useEffect(() => {
-        calculateCSBCostPerMonth();
-    },[maxChargerPower, winterMonthCost, summerMonthCost, distDemandCharge]);
     
     useEffect(() => {
         updateDailyCost(winterDailyCost, winterMonthCost, summerDailyCost, summerMonthCost);
@@ -54,7 +46,6 @@ const BusAccordion = (props: any) => {
     if (context.loading) {
         return <></>;
     }
-
     const monthsData = context.data.operation_schedule[0];
     const summerOnPeakKW = context.data.rates[1]["on_peak_kW"];
     const winterOnPeakKW = context.data.rates[2]["on_peak_kW"];
@@ -104,111 +95,82 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
     const monthlySavings = totalMonthlySavings.map((save, index)=>
     <td key={index} className="text-sm">${save}</td>)
 
-    //Values from the Bus components used for cost summary
-    
-    const addToWinterDailyCost = (data: number) => {
-        const w = Math.round((winterDailyCost+data)*100)/100;
-        setWinterDailyCost(w);
-        //22 weekdays in a month
-        setWinterMonthCost(Math.round((w*22)*100)/100);
-        setValsInitialized(true);
-    }
 
-    const addToSummerDailyCost = (data: number) => {
-        const s = Math.round((summerDailyCost+data)*100)/100;
-        setSummerDailyCost(s);
-        //22 weekdays in a month
-        setSummerMonthCost(Math.round((s*22)*100)/100);
-        setValsInitialized(true);
-    }
+    function recalculateAfterChanges() {
+        var w = 0;
+        var s = 0;
+        var onPeak = 0;
+        var d = 0;
+        var totalDaytime = 0;
+        var totalOvernight = 0;
+        var maxCharger = 0;
+        for(let i = 1; i < Object.keys(buses).length+1; i++){
+            w += Math.round(buses[i].kWhOneRouteWinter * buses[i].dollarkWhWinter * 100)/100;
+            s += Math.round(buses[i].kWhOneRouteSummer * buses[i].dollarkWhSummer * 100)/100;
+            if(buses[i].timeOfDay == "Daytime"){
+                onPeak += buses[i].chargerPower;
+            }
+            d += buses[i].totalDiesalCost;
+            if(buses[i].timeOfDay == "Daytime"){
+                totalDaytime += buses[i].chargerPower;
+            }
+            if(buses[i].timeOfDay == "Overnight"){
+                totalOvernight += buses[i].chargerPower;
+            }
+        }
+        maxCharger = Math.max(totalDaytime, totalOvernight);
 
-    const addToOnPeakkWPerMonth = (data: number) => {
-        const op = Math.round((onPeakkWPerMonth+data)*100)/100;
-        setOnPeakkWPerMonth(op);
+        //22 weekdays in a month
+        setWinterDailyCost(Math.round(w*100)/100);
+        setSummerDailyCost(Math.round(s*100)/100);
+        let summerMonthCost = Math.round((s*22)*100)/100;
+        let winterMonthCost = Math.round((w*22)*100)/100;
+        setWinterMonthCost(winterMonthCost);
+        setSummerMonthCost(summerMonthCost);
+        setOnPeakkWPerMonth(onPeak);
         let opWinter = 0;
         let opSummer = 0;
-        if(op > 25){
-            opWinter = Math.round((op*winterOnPeakKW)*100)/100;
-            opSummer = Math.round((op*summerOnPeakKW)*100)/100;
-            setOnPeakDemandChargeWinter(opWinter);
-            setOnPeakDemandChargeSummer(opSummer);
+        if(onPeak > 25){
+            opWinter = Math.round((onPeak*winterOnPeakKW)*100)/100;
+            opSummer = Math.round((onPeak*summerOnPeakKW)*100)/100;
         }
-        else{
-            setOnPeakDemandChargeSummer(0);
-            setOnPeakDemandChargeWinter(0);
-        }
-    }
-
-    const addToDieselDailyCost = (data: number) => {
-        const d = Math.round((dieselCost+data)*100)/100;
+        setOnPeakDemandChargeSummer(opSummer);
+        setOnPeakDemandChargeWinter(opWinter);
         setDieselCostPerDay(d);
         const dieselCostPerMonth = Math.round((d*22)*100)/100;
         setDieselCostPerMonth(dieselCostPerMonth);
         const sumAnnualDieselCost = Math.round(dieselCostPerMonth*totalMonthsInOperation*100)/100;
         setAnnualDieselCost(sumAnnualDieselCost)
-    }
-
-    //track the largest charger power
-    const findMaxCharger = (newVal: number) => {
-        if(newVal > maxChargerPower){
-            setMaxChargerPower(newVal);
+        setMaxChargerPower(maxCharger);
+        var distDemandCharge = 0;
+        if(maxCharger > 25){
+            distDemandCharge = Math.round(distributionCharge*maxCharger*100)/100;
         }
-    }
+        setDistDemandCharge(distDemandCharge);
 
-    const findNewMaxCharger = (skip : number) => {
-        let max = 0;
-        for(let i = 1; i < Object.keys(buses).length+1; i++){
-            if(i == skip) continue;
-            if(max < buses[i].chargerPower){
-                max = buses[i].chargerPower;
-            }
-        }
-        setMaxChargerPower(max);
-    }
-
-    function calculateDistDemandCharge(){
-        if(maxChargerPower > 25){
-            const demandCharge = Math.round(distributionCharge*maxChargerPower*100)/100;
-            setDistDemandCharge(demandCharge);
-        }
-        else{
-            setDistDemandCharge(0);
-        }
-    }
-
-    function calculateCSBCostPerMonth() {
-        const totalCSBWinter = Math.round((onPeakDemandChargeWinter+distDemandCharge+winterMonthCost)*100)/100;
-        const totalCSBSummer = Math.round((onPeakDemandChargeSummer+distDemandCharge+summerMonthCost)*100)/100;
+        var totalCSBWinter = Math.round((opWinter+distDemandCharge+winterMonthCost)*100)/100;
+        var totalCSBSummer = Math.round((opSummer+distDemandCharge+summerMonthCost)*100)/100;
         setTotalCSBSummer(totalCSBSummer);
         setTotalCSBWinter(totalCSBWinter);
-        if(valsInitialized){
-            const sumAnnualCSBCost = Math.round(((totalCSBWinter*winterMonthsActiveCount)+(totalCSBSummer*summerMonthsActiveCount)+(distDemandCharge*nonActiveMonthsCount))*100)/100;
-            setAnnualCSBCost(sumAnnualCSBCost);
-        }
+
+        const sumAnnualCSBCost = Math.round(((totalCSBWinter*winterMonthsActiveCount)+(totalCSBSummer*summerMonthsActiveCount)+(distDemandCharge*nonActiveMonthsCount))*100)/100;
+        setAnnualCSBCost(sumAnnualCSBCost);
     }
 
-    //Dealing with Bus Accordion
+    //Bus Accordion additions and deletions
     const addBus = () => {
-        addBusLocal();
-        setBusCount(busCount+1);
+        if(busCount < 10){
+            addBusLocal();
+            setBusCount(busCount+1);
+        }
     }
 
     const deleteBus = () => {
         if(busCount > 1){
             const busId = Object.keys(buses).length
-            let removeWinter = Math.round(buses[busId].kWhOneRouteWinter*buses[busId].dollarkWhWinter*100)/100;
-            let removeSummer = Math.round(buses[busId].kWhOneRouteSummer*buses[busId].dollarkWhSummer*100)/100;
-            let removeDiesel = Math.round(buses[busId].totalDiesalCost);
-            let removeChargerPower = Math.round(buses[busId].batteryCapacity*100)/100;
-            if(buses[busId].timeOfDay == "Daytime" && removeChargerPower > 29){
-                addToOnPeakkWPerMonth(-1*removeChargerPower)
-            }
-            addToWinterDailyCost(-1*removeWinter);
-            addToSummerDailyCost(-1*removeSummer);
-            addToDieselDailyCost(-1*removeDiesel);
-            findNewMaxCharger(-1);
             deleteLastBusLocal();
             setBusCount(busCount-1);
+            recalculateAfterChanges();
         }
     }
 
@@ -217,12 +179,12 @@ monthsInOperation["October"] ? onPeakDemandChargeWinter : 0, monthsInOperation["
             <div className="join join-vertical w-full">
                 {Object.values(buses).map(bus => {
                     return (
-                        <Bus key={bus.id} id={bus.id} wintercost={addToWinterDailyCost} summercost={addToSummerDailyCost} maxCharger={findMaxCharger} newMaxCharger={findNewMaxCharger} dieselcost={addToDieselDailyCost} onPeakDemand={addToOnPeakkWPerMonth}/>
+                        <Bus key={bus.id} id={bus.id} recalculate={recalculateAfterChanges}/>
                     )
                 })}
             </div>
             <div className="relative">
-                <button className="bg-[#3b9044] text-white p-2 m-1 rounded-md" onClick={addBus}>
+                <button className={busCount < 10 ? "bg-[#3b9044] text-white p-2 m-1 rounded-md": "hidden"} onClick={addBus}>
                     Add Bus
                 </button>
                 <button className={busCount>1 ? "bg-red-700 text-white p-2 m-1 rounded-md" : "hidden"} onClick={deleteBus}>

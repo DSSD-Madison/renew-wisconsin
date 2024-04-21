@@ -61,22 +61,27 @@ const Bus = (props: any) => {
 
   useEffect(() => {
     updateBusModelLocal(props.id, busModel, maxCapacity, summerRange, winterRange);
+    props.recalculate();
   }, [maxCapacity, summerRange, winterRange]);
 
   useEffect(() =>  {
     updateRouteMilesLocal(props.id, routeMiles, kWhOneRouteSummer, kWhOneRouteWinter, maxRoutesSummer, maxRoutesWinter);
+    props.recalculate();
   }, [kWhOneRouteSummer, kWhOneRouteWinter, maxRoutesSummer, maxRoutesWinter]);
 
   useEffect(() => {
-    updateTimeOfDayLocal(props.id, timeOfDay, onPeakSummer, onPeakWinter, kWhSummer, kWhWinter); 
+    updateTimeOfDayLocal(props.id, timeOfDay, onPeakSummer, onPeakWinter, kWhSummer, kWhWinter);
+    props.recalculate();
   }, [onPeakSummer, onPeakWinter, kWhSummer, kWhWinter]);
 
   useEffect(() => {
     updateChargerPowerLocal(props.id, chargerPower, summerChargingTime, winterChargingTime);
+    props.recalculate();
   }, [summerChargingTime, winterChargingTime])
 
   useEffect(() => {
     updateResultsLocal(props.id, totalElectrictyCostPerDaySummer, totalElectrictyCostPerDayWinter, demandCharge, dieselCostPerDay);
+    props.recalculate();
   }, [kWhSummer,
     kWhWinter,
     kWhOneRouteSummer,
@@ -252,13 +257,6 @@ const Bus = (props: any) => {
           ? winterRates["on_peak_kWh"]
           : 0.08,
       );
-      // If the time of day was previously overnight then add the charger power to the summary
-      if(timeOfDay == "Overnight" && chargerPower > 29){
-        props.onPeakDemand(chargerPower);
-      }
-      if(timeOfDay == "N/A"){
-        props.newMaxCharger(-1);
-      }
       return;
     }
     if (time == "Overnight") {
@@ -275,12 +273,6 @@ const Bus = (props: any) => {
           ? winterRates["off_peak_kWh"]
           : 0.054,
       );
-      if(timeOfDay == "Daytime" && chargerPower > 29){
-        props.onPeakDemand(-1*chargerPower);
-      }
-      if(timeOfDay == "N/A"){
-        props.newMaxCharger(-1);
-      }
       return;
     }
     setTimeOfDay("N/A");
@@ -288,10 +280,6 @@ const Bus = (props: any) => {
     setOnPeakWinter(0.0);
     setkWhSummer(0.0);
     setkWhWinter(0.0);
-    if(timeOfDay == "Daytime" && chargerPower > 29){
-      props.onPeakDemand(-1*chargerPower);
-    }
-    props.newMaxCharger(props.id);
     return;
   }
 
@@ -302,21 +290,6 @@ const Bus = (props: any) => {
       setSummerChargingTime(0);
       setWinterChargingTime(0);
       return;
-    }
-    props.maxCharger(powerTemp);
-    //Handle Summary Changes
-    if (timeOfDay == "Daytime" && powerTemp > 29 && chargerPower > 29) {
-      props.onPeakDemand(powerTemp - chargerPower);
-    }
-    else{
-      if(timeOfDay == "Daytime" && powerTemp > 29){
-        props.onPeakDemand(powerTemp);
-      }
-      else{
-        if(timeOfDay == "Daytime" && chargerPower > 29 && powerTemp <= 29){
-          props.onPeakDemand(-1*chargerPower)
-        }
-      }
     }
     setChargerPower(powerTemp);
     setSummerChargingTime(
@@ -331,17 +304,6 @@ const Bus = (props: any) => {
   function resultingCosts() {
     const summerCost = Math.round(kWhSummer * kWhOneRouteSummer * 100) / 100;
     const winterCost = Math.round(kWhWinter * kWhOneRouteWinter * 100) / 100;
-    if (summerCost != totalElectrictyCostPerDaySummer) {
-      //remove current bus cost from total
-      props.summercost(
-          summerCost - totalElectrictyCostPerDaySummer
-        );
-    }
-    if (winterCost != totalElectrictyCostPerDayWinter) {
-      props.wintercost(
-        winterCost - totalElectrictyCostPerDayWinter
-      );
-    }
     setTotalElectricityCostPerDaySummer(summerCost);
     setTotalElectricityCostPerDayWinter(winterCost);
     //Can possibly simplify because onePeakSummer and onPeakWinter might be 0
@@ -355,15 +317,11 @@ const Bus = (props: any) => {
     } else {
       setDemandCharge(0.0);
     }
-    console.log(dollarsPerGal)
     var d = 0;
     if (Number(routeMiles) != 0) {
       d =
         Math.round((Number(routeMiles) / milesPerGal) * dollarsPerGal * 100) /
         100;
-    }
-    if (d != dieselCostPerDay) {
-      props.dieselcost(d - dieselCostPerDay);
     }
     setDieselCostPerDay(d);
   }
@@ -558,7 +516,7 @@ const Bus = (props: any) => {
             className="tooltip tooltip-right cursor-help"
             data-tip="If the bus is being charged during On-Peak hours and requires 30 or more kWs, the demand charge will be Charger Power (kW) * The average of On-Peak $/kW in the summer and winter."
           >
-            Demand Charge<span className="text-[#2495c4]">* </span>: <span className="font-bold">${demandCharge}</span>
+            On-Peak Demand Charge<span className="text-[#2495c4]">* </span>: <span className="font-bold">${demandCharge}</span>
           </h1>
           <br></br>
           <h1

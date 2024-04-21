@@ -22,7 +22,6 @@ export default function Input() {
     const winterCharges: SummerWinterCharges = rates[2];
 
     const assumptions = context.data.assumptions;
-    //console.log("Assumptions: ", assumptions);
         
     const sumEff = Number(assumptions[0]['summer_efficiency'] != undefined ? assumptions[0]['summer_efficiency'] : 0.9) * 100
     const winEff = Number(assumptions[0]['winter_efficiency'] != undefined ? assumptions[0]['winter_efficiency'] : 0.8) * 100
@@ -59,7 +58,6 @@ export default function Input() {
       
       const newMonths = [...context.data.operation_schedule]
       newMonths[0] = updatedMonthsData
-      console.log(updatedMonthsData)
       setData((prevState:any) => ({...prevState, operation_schedule:newMonths}))
 
     }

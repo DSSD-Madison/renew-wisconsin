@@ -235,7 +235,6 @@ export default function Admin() {
         return;
       }
       if (newBus.chargingType.some(type => !["1", "2", "3"].includes(type))) {
-        console.log(newBus.chargingType);
         setError("Charging type can only include values '1', '2', or '3'. Please enter a comma-separated list of these values with no spaces.");
         return;
       }

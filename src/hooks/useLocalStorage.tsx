@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import BusAccordion from "~/components/BusAccordion";
 
 type Summary = {
   winterDailyCost: number,
@@ -94,6 +95,7 @@ const initialBusesState: Buses = {
 }
 
 const useLocalStorage = () => {
+
   const [buses, setBuses] = useState<Buses>(() => {
     return initialBusesState;
   });
