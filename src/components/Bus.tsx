@@ -30,10 +30,10 @@ const Bus = (props: any) => {
   const [chargerPower, setChargerPower] = useState(buses[props.id] ? buses[props.id].chargerPower : 0);
   const [summerChargingTime, setSummerChargingTime] = useState(buses[props.id] ? buses[props.id].summerChargingTime: 0);
   const [winterChargingTime, setWinterChargingTime] = useState(buses[props.id] ? buses[props.id].winterChargingTime: 0);
-  const [onPeakSummer, setOnPeakSummer] = useState(buses[props.id] ? buses[props.id].onPeakSummer: 0);
-  const [kWhSummer, setkWhSummer] = useState(buses[props.id] ? buses[props.id].dollarkWhSummer: 0);
-  const [onPeakWinter, setOnPeakWinter] = useState(buses[props.id] ? buses[props.id].onPeakWinter: 0);
-  const [kWhWinter, setkWhWinter] = useState(buses[props.id] ? buses[props.id].dollarkWhWinter: 0);
+  const [onPeakSummer, setOnPeakSummer] = useState(buses[props.id].timeOfDay == "Daytime" ? context.data.rates[1]["on_peak_kW"]: 0);
+  const [kWhSummer, setkWhSummer] = useState(buses[props.id].timeOfDay == "Daytime" ? context.data.rates[1]["on_peak_kWh"]: buses[props.id].timeOfDay == "Overnight" ? context.data.rates[1]["off_peak_kWh"] : 0);
+  const [onPeakWinter, setOnPeakWinter] = useState(buses[props.id].timeOfDay == "Daytime" ? context.data.rates[2]["on_peak_kW"] : 0);
+  const [kWhWinter, setkWhWinter] = useState(buses[props.id].timeOfDay == "Daytime" ? context.data.rates[2]["on_peak_kWh"] : buses[props.id].timeOfDay == "Overnight" ? context.data.rates[2]["off_peak_kWh"] : 0);
   const [totalElectrictyCostPerDaySummer, setTotalElectricityCostPerDaySummer] = useState(buses[props.id] ? buses[props.id].totalECSummer: 0);
   const [totalElectrictyCostPerDayWinter, setTotalElectricityCostPerDayWinter] = useState(buses[props.id] ? buses[props.id].totalECWinter: 0);
   const [demandCharge, setDemandCharge] = useState(buses[props.id] ? buses[props.id].demandCharge: 0);
@@ -87,7 +87,8 @@ const Bus = (props: any) => {
     kWhOneRouteSummer,
     kWhOneRouteWinter,
     chargerPower,
-    routeMiles,])
+    routeMiles,
+    dieselCostPerDay])
 
   if (context.loading) {
     return <LoadingSpinner></LoadingSpinner>;
@@ -142,6 +143,7 @@ const Bus = (props: any) => {
   const rates = context.data.rates;
   const summerRates = rates[1];
   const winterRates = rates[2];
+
 
   function busModelChange(model: string) {
     setBusModel(model);

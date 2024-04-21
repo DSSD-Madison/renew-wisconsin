@@ -39,8 +39,8 @@ export default function Input() {
 
     const handleRatesChange = (key: string, value: number) => {
       const newRates = [...rates]
-      if (key === 'districtCharge') {
-        newRates[0] = {district_demand_charge: value};
+      if (key === 'distributionCharge') {
+        newRates[0] = {distribution_demand_charge: value};
       } else {
         const [season, field] = key.split(/_(.*)/s);
         if (season === 'summer') {
