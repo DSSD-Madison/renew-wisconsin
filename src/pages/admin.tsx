@@ -245,8 +245,8 @@ export default function Admin() {
         charging_type: newBus.chargingType,
         company: newBus.company,
         gvwr: newBus.gvwr,
-        max_charge_capacity: newBus.maxChargeCapacity,
-        max_passenger_capacity: newBus.maxPassengerCapacity,
+        maximum_charge_capacity: newBus.maxChargeCapacity,
+        maximum_passenger_capacity: newBus.maxPassengerCapacity,
         maximum_range: newBus.maxRange,
         model: newBus.model,
         price_high: newBus.priceHigh,
@@ -584,7 +584,7 @@ export default function Admin() {
                       <Input
                         id={id}
                         type="text"
-                        value={newBus.chargingType.join(',')}
+                        value={newBus.chargingType}
                         onChange={(e) => setNewBus({ ...newBus, chargingType: e.target.value.split(',') })}
                         placeholder="Enter charging types (e.g., 1,2,3)"
                         pattern="^(\d+,)*\d+$"

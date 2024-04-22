@@ -2,7 +2,7 @@ import React, {useContext} from 'react';
 import {DataContext} from "~/contexts/dataContext";
 import LoadingSpinner from "~/components/equipment/loading_bar";
 import {BusData, BusTable} from "~/components/equipment/busTable";
-import {ChargingData, ChargingDataTable} from "~/components/equipment/chargerTable";
+import { ChargingDataTable } from '~/components/equipment/chargerTable';
 
 export default function Equipment() {
     const context = useContext(DataContext);
@@ -10,40 +10,7 @@ export default function Equipment() {
         return <h1><LoadingSpinner /></h1>
     }
 
-    const extractNumericValue = (obj: any, propertyName: string): number | undefined => {
-        const value = obj[propertyName];
-        if (typeof value === 'number') {
-            return value;
-        } else if (typeof value === 'string') {
-            const numericValue = parseFloat(value);
-            return isNaN(numericValue) ? undefined : numericValue;
-        } else {
-            return undefined;
-        }
-    };
-
-    // Function to sort by "Certified Charger Output" numerically
-    const createTypedAndSortedChargingData = (chargingData: any[]): ChargingData[] => {
-        const typedChargingDataArray: ChargingData[] = chargingData.map((data: any) => new ChargingData(data));
-
-        // Sort by "Certified Charger Output (kW)"
-        typedChargingDataArray.sort((a, b) => {
-            const aValue = extractNumericValue(a, 'Certified Charger Output (kW)');
-            const bValue = extractNumericValue(b, 'Certified Charger Output (kW)');
-
-            if (aValue !== undefined && bValue !== undefined) {
-                return aValue - bValue;
-            } else {
-                return 0; 
-            }
-        });
-
-        return typedChargingDataArray;
-    };
-
     const typedBusDataArray: BusData[] = context.data.buses.map((data: any) => new BusData(data));
-    const typedWinterChargingData: ChargingData[] = createTypedAndSortedChargingData(context.data.winter_charging);
-    const typedSummerChargingData: ChargingData[] = createTypedAndSortedChargingData(context.data.summer_charging);
 
     return (
         <section className="content-center">
@@ -59,7 +26,8 @@ export default function Equipment() {
             <br/>
             <div className="p-5">
             <h1 className="text-4xl font-bold text-center">Charger Statistics</h1>
-            <ChargingDataTable data1={typedWinterChargingData} data2={typedSummerChargingData}/>
+            <h2 className="font-semibold text-center">The amount of time [hr:min] to charge each model from 0 charge to full charge.</h2>
+            <ChargingDataTable/>
             </div>
         </section>
     )
