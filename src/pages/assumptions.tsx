@@ -7,6 +7,7 @@ import DemandChargesTable from "~/components/DemandChargesTable";
 import {SummerWinterCharges, DistributionDemandCharge} from "~/components/DemandChargesTable";
 import LoadingSpinner from "~/components/equipment/loading_bar"; // Assuming LoadingSpinner is in the same directory
 import EfficienciesTable from '~/components/EfficienciesTable';
+import Link from "next/link";
 
 export default function Input() {
     const context = useContext(DataContext);
@@ -22,7 +23,6 @@ export default function Input() {
     const winterCharges: SummerWinterCharges = rates[2];
 
     const assumptions = context.data.assumptions;
-    //console.log("Assumptions: ", assumptions);
         
     const sumEff = Number(assumptions[0]['summer_efficiency'] != undefined ? assumptions[0]['summer_efficiency'] : 0.9) * 100
     const winEff = Number(assumptions[0]['winter_efficiency'] != undefined ? assumptions[0]['winter_efficiency'] : 0.8) * 100
@@ -40,8 +40,8 @@ export default function Input() {
 
     const handleRatesChange = (key: string, value: number) => {
       const newRates = [...rates]
-      if (key === 'districtCharge') {
-        newRates[0] = {district_demand_charge: value};
+      if (key === 'distributionCharge') {
+        newRates[0] = {distribution_demand_charge: value};
       } else {
         const [season, field] = key.split(/_(.*)/s);
         if (season === 'summer') {
@@ -59,7 +59,6 @@ export default function Input() {
       
       const newMonths = [...context.data.operation_schedule]
       newMonths[0] = updatedMonthsData
-      console.log(updatedMonthsData)
       setData((prevState:any) => ({...prevState, operation_schedule:newMonths}))
 
     }
@@ -73,7 +72,7 @@ export default function Input() {
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-info shrink-0 w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
               <span>Click on the values to edit the calculator&apos;s settings.</span></div>
             <div className="flex-wrap">
-              <div className='m-5 p-5'>
+              <div className='m-5 p-5 overflow-x-auto'>
               <h1 className="text-2xl font-bold">Efficiencies</h1>
               <EfficienciesTable
                 summer_efficiency={sumEff}
@@ -84,15 +83,16 @@ export default function Input() {
               />
               </div>
               
-              <div className='m-5 p-5'>
+              <div className='m-5 p-5 overflow-x-auto'>
                 <h1 className="text-2xl font-bold">Demand Charges</h1>
+                <h3>For more rate schedule information, click <Link href="https://drive.google.com/file/d/1xubRUqYI_7t6R1wy8E_iFA68_PxbCnMJ/view" className="text-blue-300">here.</Link></h3>
                 <DemandChargesTable 
                   summerCharges={summerCharges}
                   winterCharges={winterCharges}
                   distributionCharge={distributionCharge} 
                   onValueChange={handleRatesChange} />
               </div>
-              <div className='m-5 p-5'>
+              <div className='m-5 p-5 overflow-x-auto'>
                 <h1 className="text-2xl font-bold">Bus Operating Months</h1>
                 <Calendar 
                   monthsData={monthsData} 

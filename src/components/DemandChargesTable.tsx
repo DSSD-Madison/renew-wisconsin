@@ -70,11 +70,11 @@ const DemandChargesTable: React.FC<DemandChargesTableProps> = ({
           <tr>
             <th>On-Peak $/kWh</th>
             <th>Off-Peak $/kWh</th>
-            <th>Dist. $/kW</th>
+            <th>On-Peak $/kW</th>
             <th>On-Peak $/kWh</th>
             <th>Off-Peak $/kWh</th>
             <th>On-Peak $/kW</th>
-            <th>Dist. $/kW</th>
+            <th>Distribution $/kW</th>
           </tr>
         </thead>
         <tbody>
