@@ -59,7 +59,8 @@ export default function Equipment() {
             <br/>
             <div className="p-5">
             <h1 className="text-4xl font-bold text-center">Charger Statistics</h1>
-            <ChargingDataTable data1={typedWinterChargingData} data2={typedSummerChargingData}/>
+            <h2 className="font-semibold text-center">The amount of time in hours to charge each model from 0 charge to full charge.</h2>
+            <ChargingDataTable/>
             </div>
         </section>
     )

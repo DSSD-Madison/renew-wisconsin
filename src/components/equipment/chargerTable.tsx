@@ -1,4 +1,5 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
+import { DataContext } from "~/contexts/dataContext";
 
 export class ChargingData {
     public "All American RE Electric": number = -1
@@ -29,14 +30,28 @@ class ChargerTableProps {
     data2: ChargingData[];
 }
 
-export const ChargingDataTable: React.FC<ChargerTableProps> = ({data1, data2}) => {
+export const ChargingDataTable = () => {
+    const context = useContext(DataContext);
     const [activeDataset, setActiveDataset] = useState(1);
-
     const handleTabClick = (datasetNumber: number) => {
         setActiveDataset(datasetNumber);
     };
 
-    const activeData = activeDataset === 1 ? data1 : data2;
+    const chargerData = context.data.summer_charging;
+    const chargerStrings: string[] = [];
+    for (let i = 0; i < chargerData.length; i++) {
+      chargerStrings.push(chargerData[i]["Certified Charger Output (kW)"]);
+    }
+    chargerStrings.sort((a,b) => parseFloat(a) - parseFloat(b));
+    const chargers: number[] = chargerStrings.map(str => Number(str));
+    const busData = context.data.buses;
+    console.log(busData)
+    let models: string[] = [];
+    let capacities: number[] = [];
+    for(let i = 0; i < busData.length; i++){
+        models.push(busData[i]["model"]);
+        capacities.push(Number(busData[i]["maximum_charge_capacity"]));
+    }
 
     return (
         <div>
@@ -59,30 +74,30 @@ export const ChargingDataTable: React.FC<ChargerTableProps> = ({data1, data2}) =
                 className="w-full table-auto border-collapse bg-white border border-gray-200 shadow-md rounded-md z-10 relative">
                 <thead className="bg-gray-100 text-gray-700">
                 <tr>
-                    <th className="py-2 px-4 sticky left-0 h-fit bg-white">Charger Output (kW)</th>
-                    <th className="py-2 px-4">All American RE Electric</th>
-                    <th className="py-2 px-4">Electric CE Series 1</th>
-                    <th className="py-2 px-4">Electric CE Series 2</th>
-                    <th className="py-2 px-4">Level</th>
-                    <th className="py-2 px-4">LionC</th>
-                    <th className="py-2 px-4">Saf-Tliner® C2 Jouley®</th>
-                    <th className="py-2 px-4">Vision Electric</th>
+                    <th className="py-2 px-4 sticky left-0 h-fit">Model</th>
+                    {chargerStrings.map((charger, index) => (
+                        <th key={index} className="py-2 px-4">{charger}<span className="font-normal"> kW</span></th>
+                    ))}
                 </tr>
                 </thead>
                 <tbody className="text-gray-800">
-                {activeData.map((chargingData, index) => (
+                {capacities.map((capacity, index) => (
                     <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : ''}>
                         <td key={index} className={index % 2 === 0 ? 'bg-gray-50 py-2 px-4 sticky left-0 h-fit' : 'bg-white py-2 px-4 sticky left-0 h-fit'}>
-                            {chargingData["Certified Charger Output (kW)"]}</td>
-                        <td className="py-2 px-4">{chargingData["All American RE Electric"]}</td>
-                        <td className="py-2 px-4">{chargingData["Electric CE Series 1"]}</td>
-                        <td className="py-2 px-4">{chargingData["Electric CE Series 2"]}</td>
-                        <td className="py-2 px-4">{chargingData["Level"]}</td>
-                        <td className="py-2 px-4">{chargingData["LionC"]}</td>
-                        <td className="py-2 px-4">{chargingData["Saf-Tliner® C2 Jouley®"]}</td>
-                        <td className="py-2 px-4">{chargingData["Vision Electric"]}</td>
-                    </tr>
-                ))}
+                            {models[index]}</td>
+                            {activeDataset === 1 ? chargers.map((charger,index) => (
+                                <td key={index} className="py-2 px-4">
+                                    {Math.round((capacity / (charger * 0.82)) * 100) / 100}
+                                </td>
+                            )) :
+                            chargers.map((charger,index) => (
+                                <td key={index} className="py-2 px-4">
+                                    {Math.round(capacity / charger * 100) / 100}
+                                </td>
+                            ))
+                            }
+                                </tr>
+                            ))}
                 </tbody>
             </table>
             </div>
