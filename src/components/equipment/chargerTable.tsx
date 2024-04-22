@@ -1,34 +1,20 @@
 import React, {useContext, useState} from "react";
 import { DataContext } from "~/contexts/dataContext";
 
-export class ChargingData {
-    public "All American RE Electric": number = -1
-    public "Certified Charger Output (kW)": number = -1
-    public "Electric CE Series 1": number = -1
-    public "Electric CE Series 2": number = -1
-    public "Level": number = -1
-    public "LionC": number = -1
-    public "Saf-Tliner® C2 Jouley®": number = -1
-    public "Vision Electric": number = -1
-
-    constructor(data: any) {
-        this["All American RE Electric"] = data["All American RE Electric"];
-        this["Certified Charger Output (kW)"] = data["Certified Charger Output (kW)"];
-        this["Electric CE Series 1"] = data["Electric CE Series 1"];
-        this["Electric CE Series 2"] = data["Electric CE Series 2"];
-        this["Level"] = data["Level"];
-        this["LionC"] = data["LionC"];
-        this["Saf-Tliner® C2 Jouley®"] = data["Saf-Tliner® C2 Jouley®"];
-        this["Vision Electric"] = data["Vision Electric"];
+const formatDecimalToTime = (hrs : number) => {
+    let decimal = hrs % 1;
+    let hr = Math.round(hrs);
+    let mins = decimal*60;
+    let minString = mins.toString().split('.')[0];
+    if(hr == 0){
+        return minString + " mins"
     }
+    if(minString.length === 1){
+        minString = "0" + minString;
+    }
+    return hr.toString() + ":" + minString;
 }
 
-class ChargerTableProps {
-    // @ts-ignore
-    data1: ChargingData[];
-    // @ts-ignore
-    data2: ChargingData[];
-}
 
 export const ChargingDataTable = () => {
     const context = useContext(DataContext);
@@ -45,7 +31,6 @@ export const ChargingDataTable = () => {
     chargerStrings.sort((a,b) => parseFloat(a) - parseFloat(b));
     const chargers: number[] = chargerStrings.map(str => Number(str));
     const busData = context.data.buses;
-    console.log(busData)
     let models: string[] = [];
     let capacities: number[] = [];
     for(let i = 0; i < busData.length; i++){
@@ -87,12 +72,12 @@ export const ChargingDataTable = () => {
                             {models[index]}</td>
                             {activeDataset === 1 ? chargers.map((charger,index) => (
                                 <td key={index} className="py-2 px-4">
-                                    {Math.round((capacity / (charger * 0.82)) * 100) / 100}
+                                    {formatDecimalToTime((Math.round((capacity / (charger * 0.82)) * 100) / 100))}
                                 </td>
                             )) :
                             chargers.map((charger,index) => (
                                 <td key={index} className="py-2 px-4">
-                                    {Math.round(capacity / charger * 100) / 100}
+                                    {formatDecimalToTime((Math.round(capacity / charger * 100) / 100))}
                                 </td>
                             ))
                             }
