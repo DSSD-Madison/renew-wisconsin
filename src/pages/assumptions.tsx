@@ -7,6 +7,7 @@ import DemandChargesTable from "~/components/DemandChargesTable";
 import {SummerWinterCharges, DistributionDemandCharge} from "~/components/DemandChargesTable";
 import LoadingSpinner from "~/components/equipment/loading_bar"; // Assuming LoadingSpinner is in the same directory
 import EfficienciesTable from '~/components/EfficienciesTable';
+import Link from "next/link";
 
 export default function Input() {
     const context = useContext(DataContext);
@@ -84,6 +85,7 @@ export default function Input() {
               
               <div className='m-5 p-5 overflow-x-auto'>
                 <h1 className="text-2xl font-bold">Demand Charges</h1>
+                <h3>For more rate schedule information, click <Link href="https://drive.google.com/file/d/1xubRUqYI_7t6R1wy8E_iFA68_PxbCnMJ/view" className="text-blue-300">here.</Link></h3>
                 <DemandChargesTable 
                   summerCharges={summerCharges}
                   winterCharges={winterCharges}
